@@ -103,7 +103,7 @@ def get_resampled_data(ticker,start,end,period):
     data['Log Volume Change']=np.log(data['Volume'].shift(1)/data['Volume']).dropna()
     
     data['Turnover Rate 1']=data['Volume']/data['Outstanding Shares']
-    data['Inverse Turnover Rate 1']=data['Volume']/data['Outstanding Shares']
+    data['Inverse Turnover Rate 1']=1/data['Turnover Rate 1']
     
     data['Turnover Rate']=data['Volume']/data['Shares Traded']
     data['Inverse Turnover Rate']=1/data['Turnover Rate']

@@ -318,8 +318,8 @@ def portfolio_long_value(ins,outs,investment,k):
 ticker='^NSEI'
 ticker=yf.Ticker(ticker)
 data=ticker.history(start=date(2015,1,1),end=date(2021,11,30))
-#matrix=momentum_matrix('Turnover Rate','Log Returns','W',start=date(2015,1,1),end=date(2021,11,30))
-for j in range(1,8):
+matrix=momentum_matrix('Turnover Rate','Log Returns','W',start=date(2015,1,1),end=date(2021,11,30))
+for j in range(5,8):
     for k in range(1,8):
         if k<=j:
             ins,outs=momentum_1(matrix,j=j,k=k,equal=False,contrarian=True)
@@ -331,7 +331,7 @@ for j in range(1,8):
             plt.show()
 
 
-matrix3=momentum_matrix('Unity','Log Returns','W',start=date(2015,1,1),end=date(2021,11,30))
+#matrix3=momentum_matrix('Unity','Log Returns','W',start=date(2015,1,1),end=date(2021,11,30))
 for j in range(,8):
     for k in range(1,8):
         if k<=j:
