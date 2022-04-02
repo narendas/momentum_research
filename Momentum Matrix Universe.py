@@ -1,5 +1,5 @@
 import os
-os.chdir(r'C:/Users/HP/Desktop/Repos/momentum_research')
+os.chdir(r'C:\Users\NarendradasT\OneDrive - Carbynetech (India ) Pvt Ltd\Desktop\Repos\momentum_research')
 from nsetools import Nse
 import pandas as pd
 from base import get_resampled_data

@@ -1,5 +1,5 @@
 import os
-os.chdir(r'C:/Users/HP/Desktop/Repos/momentum_research')
+os.chdir(r'C:\Users\NarendradasT\OneDrive - Carbynetech (India ) Pvt Ltd\Desktop\Repos\momentum_research')
 import numpy as np
 import pandas as pd
 from base import momentum_matrix
@@ -48,7 +48,7 @@ def momentum_1(matrix,j,k,equal=True,contrarian=False):
             
             buy_weights=buy_weights
             for company in buy_companies:
-                ins.loc[matrix.index[i],company]=0*buy_weights[buy_weights.index==company][0]
+                ins.loc[matrix.index[i],company]=1*buy_weights[buy_weights.index==company][0]
                 
         
         negative_momentum=momentum[momentum<0]
@@ -69,10 +69,8 @@ def momentum_1(matrix,j,k,equal=True,contrarian=False):
             for company in sell_companies:
                 ins.loc[matrix.index[i],company]=1*sell_weights[sell_weights.index==company][0]
         
-# =============================================================================
-#         if len(sell_companies)>0 and len(buy_companies)>0:
-#             ins.loc[matrix.index[i],:]=ins.loc[matrix.index[i],:]*0.5
-# =============================================================================
+        if len(sell_companies)>0 and len(buy_companies)>0:
+            ins.loc[matrix.index[i],:]=ins.loc[matrix.index[i],:]*0.5
     
     outs=pd.DataFrame(-np.array(ins),index=outs.index,columns=outs.columns)
     
@@ -250,6 +248,85 @@ def portfolio_value(ins,outs,investment,k):
     a=a[a!=0]
     return a
 
+def momentum_3(matrix,j,k,equal=True,contrarian=False):    
+    prev_comb=''
+    ins=pd.DataFrame(columns=matrix.columns,index=matrix.index[j-1:-k])
+    outs=pd.DataFrame(columns=matrix.columns,index=matrix.index[j-1+k:])
+    
+    for i in range(j-1,len(matrix.index)-k):
+        year=str(matrix.index[i].year)[2:]
+        month=str(matrix.index[i].month_name())[:3]
+        
+        comb=month+'-'+year
+        
+        lookback=matrix[i+1-j:i+1]
+        holding=matrix[i+1:i+k+1]
+        
+        nifty_companies=pd.read_csv('C:/Users/HP/Desktop/Repos/momentum_research/nifty_companies.csv')
+        
+        if prev_comb!=comb:
+            companies=list(nifty_companies[comb])
+            
+        prev_comb=comb
+        
+        lookback=lookback[companies]
+        holding=holding[companies]
+        
+        lookback=lookback.dropna(axis=1)
+        holding=holding.dropna(axis=1)
+        
+        momentum=lookback.mean()/lookback.std()
+        
+        positive_momentum=momentum[momentum>0]
+        positive_rank=positive_momentum.rank(pct=True)
+        
+        buy_companies=positive_rank[positive_rank>=0.9].index
+        
+        if len(buy_companies)>0:
+            if equal==True:
+                buy_weights=pd.Series(1/len(buy_companies),index=buy_companies)
+            
+            else:
+                buy_weights=pd.Series(index=buy_companies)
+                buy_weights=positive_momentum[buy_weights.index]
+                
+                buy_weights=buy_weights/buy_weights.sum()
+            
+            buy_weights=buy_weights*0.5
+            for company in buy_companies:
+                ins.loc[matrix.index[i],company]=-1*buy_weights[buy_weights.index==company][0]
+                
+        
+        negative_momentum=momentum[momentum<0]
+        negative_rank=negative_momentum.rank(pct=True)
+        sell_companies=negative_rank[negative_rank<=0.1].index
+        
+        if len(sell_companies)>0:
+            if equal==True:
+                sell_weights=pd.Series(-1/len(sell_companies),index=sell_companies)
+            else:
+                sell_weights=pd.Series(index=sell_companies)
+                sell_weights=negative_momentum[sell_weights.index]
+                
+                sell_weights=-sell_weights/sell_weights.sum()
+            
+            sell_weights=sell_weights*0.5
+            for company in sell_companies:
+                ins.loc[matrix.index[i],company]=sell_weights[sell_weights.index==company][0]
+        
+    
+    outs=pd.DataFrame(-np.array(ins),index=outs.index,columns=outs.columns)
+    
+    ins.fillna(0,inplace=True)
+    outs.fillna(0,inplace=True)
+    
+    ins.index=ins.index+timedelta(days=1)
+    
+    if contrarian==True:
+        ins=-ins
+        outs=-outs
+    return ins,outs
+
 def portfolio_long_value(ins,outs,investment,k):
     cash=pd.Series(k*investment,index=pd.date_range(start=ins.index[0],end=outs.index[0]-timedelta(days=1)))
     capital_history=pd.DataFrame(index=ins.index,columns=['Capital'])
@@ -330,29 +407,25 @@ def portfolio_long_value(ins,outs,investment,k):
     a=a[a!=0]
     return a
 
-# =============================================================================
-# ticker='^NSEI'
-# ticker=yf.Ticker(ticker)
-# data=ticker.history(start=date(2015,1,1),end=date(2021,11,30))
-# matrix=pd.read_csv('Momentum Matrix/Year/Inverse Turnover Rate 1/matrix.csv')
-# matrix.index=pd.to_datetime(matrix['Date'])
-# matrix.drop('Date',axis=1,inplace=True)
-# # =============================================================================
-# # for j in range(1,8):
-# #     for k in range(1,8):
-# #         if k<=j:
-# #             if os.path.exists('Buying/Month/momentum_1/Inverse Turnover Rate 1/'+str(j)+str(k)+'.csv'):
-# #                 print('Already Exists')
-# #             else:
-# # =============================================================================
-# ins,outs=momentum_1(matrix,j=j,k=k,equal=False,contrarian=True)
-# port_value=portfolio_long_value(ins,outs,8000,k=k)
-# port_value.to_csv('Buying/Year/Contrarian momentum_1/Inverse Turnover Rate 1/'+str(j)+str(k)+'.csv')
-# port_value.plot()
-# a=k*data['Close']
-# a.plot()
-# plt.show()
-# =============================================================================
+ticker='^NSEI'
+ticker=yf.Ticker(ticker)
+data=ticker.history(start=date(2015,1,1),end=date(2021,11,30))
+matrix=pd.read_csv('Momentum Matrix/Year/Inverse Turnover Rate 1/matrix.csv')
+matrix.index=pd.to_datetime(matrix['Date'])
+matrix.drop('Date',axis=1,inplace=True)
+for j in range(1,8):
+    for k in range(1,8):
+        if k<=j:
+            if os.path.exists('Buying/Month/momentum_1/Inverse Turnover Rate 1/'+str(j)+str(k)+'.csv'):
+                print('Already Exists')
+            else:
+                ins,outs=momentum_1(matrix,j=j,k=k,equal=False,contrarian=True)
+                port_value=portfolio_long_value(ins,outs,8000,k=k)
+                port_value.to_csv('Buying/Year/Contrarian momentum_1/Inverse Turnover Rate 1/'+str(j)+str(k)+'.csv')
+                port_value.plot()
+                a=k*data['Close']
+                a.plot()
+                plt.show()
 
 
 ticker='^NSEI'
@@ -362,21 +435,20 @@ matrix=pd.read_csv('Momentum Matrix/Week/Turnover Rate 1/matrix.csv')
 matrix.index=pd.to_datetime(matrix['Date'])
 matrix.drop('Date',axis=1,inplace=True)
 
+
 mass=pd.read_csv('Momentum Mass/Week/Turnover Rate 1/matrix.csv')
 mass.index=pd.to_datetime(mass['Date'])
 mass.drop('Date',axis=1,inplace=True)
-# =============================================================================
-# for j in range(1,8):
-#     for k in range(1,8):
-#         if k<=j:
-#             if os.path.exists('Buying/Month/momentum_1/Inverse Turnover Rate 1/'+str(j)+str(k)+'.csv'):
-#                 print('Already Exists')
-#             else:
-# =============================================================================
-ins,outs=momentum_2(matrix,mass,j=j,k=k,equal=False,contrarian=True)
-port_value=portfolio_long_value(ins,outs,8000,k=k)
-port_value.to_csv('Buying/Week/momentum_2/Turnover Rate 1/'+str(j)+str(k)+'.csv')
-port_value.plot()
-a=k*data['Close']
-a.plot()
-plt.show()
+for j in range(1,8):
+    for k in range(1,8):
+        if k<=j:
+            if os.path.exists('Buying/Month/momentum_1/Inverse Turnover Rate 1/'+str(j)+str(k)+'.csv'):
+                print('Already Exists')
+            else:
+                ins,outs=momentum_2(matrix,mass,j=j,k=k,equal=True,contrarian=True)
+                port_value=portfolio_long_value(ins,outs,8000,k=k)
+                port_value.to_csv('Buying/Week/momentum_2/Turnover Rate 1/'+str(j)+str(k)+'.csv')
+                port_value.plot()
+                a=k*data['Close']
+                a.plot()
+                plt.show()
