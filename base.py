@@ -6,12 +6,15 @@ from nsepy import get_history
 from datetime import date, timedelta
 
 def get_data(stock):
-    data=pd.read_csv('Historical Price Data/'+stock+'.csv')        
+    data=pd.read_csv('Historical Price Data/'+stock+'.csv')
+    data['Date']=pd.to_datetime(data['Date'])
+    data.index=data['Date']
+    data.drop('Date',axis=1,inplace=True)    
     return data
 
 
 def get_resampled_data(ticker,start,end,period):
-    data=get_data(ticker,start=start,end=end)
+    data=get_data(ticker)
     
     if period=='W':
         data['Returns']= data['Close'].pct_change()
