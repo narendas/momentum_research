@@ -1,16 +1,10 @@
 import pandas as pd
-from base import momentum_matrix
-from datetime import date,timedelta
-from nsepy import get_history
-import yfinance as yf
-import matplotlib.pyplot as plt
-from math import isnan
+from datetime import timedelta
 import numpy as np
 import os
 os.chdir(r'C:\Users\NarendradasT\OneDrive - Carbynetech (India ) Pvt Ltd\Desktop\Repos\momentum_research')
 
 def momentum_1(matrix,j,k,equal=True,contrarian=False):    
-    prev_comb=''
     ins=pd.DataFrame(columns=matrix.columns,index=matrix.index[j-1:-k])
     outs=pd.DataFrame(columns=matrix.columns,index=matrix.index[j-1+k:])
     for i in range(j-1,len(matrix.index)-k):
