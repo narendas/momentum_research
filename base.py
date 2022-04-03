@@ -57,6 +57,4 @@ def get_resampled_data(ticker,start,end,period):
     
     data.replace([np.inf, -np.inf], np.nan, inplace=True)
     data.dropna(inplace=True)
-    
-    
     return data
