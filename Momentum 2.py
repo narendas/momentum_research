@@ -8,6 +8,7 @@ os.chdir(r'C:\Users\NarendradasT\OneDrive - Carbynetech (India ) Pvt Ltd\Desktop
 def momentum_2(matrix,mass,j,k,equal=True,contrarian=False):
     ins=pd.DataFrame(columns=matrix.columns,index=matrix.index[j-1:-k])
     outs=pd.DataFrame(columns=matrix.columns,index=matrix.index[j-1+k:])
+    nifty500companies=pd.read_csv('Nifty 500 Companies/Nifty 500 Companies.csv')
     for i in range(j-1,len(matrix.index)-k):
         year=str(matrix.index[i].year)
         month=str(matrix.index[i].month_name())[:3]
@@ -19,7 +20,6 @@ def momentum_2(matrix,mass,j,k,equal=True,contrarian=False):
         lookback_mass1=mass[i+1-j:i+1]
         holding_mass1=mass[i+1:i+k+1]
         
-        nifty500companies=pd.read_csv('Nifty 500 Companies/Nifty 500 Companies.csv')
         
         companies=list(nifty500companies.loc[:,comb])
         companies=[company for company in companies if company in matrix.columns]
