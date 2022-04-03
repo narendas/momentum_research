@@ -92,5 +92,8 @@ if __name__=='__main__':
     matrix=pd.read_csv('Momentum/Momentum Matrix/Week/Turnover Rate/matrix.csv')
     matrix['Date']=pd.to_datetime(matrix['Date'])
     matrix.index=matrix['Date']
-    matrix.drop('Date',axis=1,inplace=True)  
+    matrix.drop('Date',axis=1,inplace=True)
+    
+    j=1
+    k=1
     ins,outs=momentum_1(matrix,j,k,equal=True,contrarian=False)
