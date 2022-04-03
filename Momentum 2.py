@@ -82,6 +82,8 @@ def momentum_2(matrix,mass,j,k,equal=True,contrarian=False):
         
         if len(sell_companies)>0 and len(buy_companies)>0:
             ins.loc[matrix.index[i],:]=ins.loc[matrix.index[i],:]*0.5
+        else:
+            ins.loc[matrix.index[i],:]=ins.loc[matrix.index[i],:]*0
     
     outs=pd.DataFrame(-np.array(ins),index=outs.index,columns=outs.columns)
     
