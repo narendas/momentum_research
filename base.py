@@ -1,9 +1,5 @@
-import yfinance as yf
 import numpy as np
 import pandas as pd
-import nsetools as nse
-from nsepy import get_history
-from datetime import date, timedelta
 
 def get_data(stock):
     data=pd.read_csv('Historical Price Data/'+stock+'.csv')
