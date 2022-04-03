@@ -1,7 +1,5 @@
 from tabula import read_pdf
-from tabulate import tabulate
 import os
-import numpy as np
 import pandas as pd
 os.chdir(r'C:/Users/NarendradasT/OneDrive - Carbynetech (India ) Pvt Ltd/Desktop/Repos/momentum_research/Nifty 500 Companies')
 
