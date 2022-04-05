@@ -106,9 +106,9 @@ if __name__=='__main__':
     for j in range(1,max_iter):
         for k in range(1,max_iter):
             print(j,k)
-            if os.path.exists('Contrarian Strategy/Momentum 1/'+mass+'/'+period+'/'+str(j)+'-'+str(k)+'.csv'):
+            if os.path.exists('Contrarian Strategy/Momentum 1/'+mass+'/L-W/'+period+'/'+str(j)+'-'+str(k)+'.csv'):
                 print('Already Exists')
-                portfolio_value=pd.read_csv('Contrarian Strategy/Momentum 1/'+mass+'/'+period+'/'+str(j)+'-'+str(k)+'.csv')
+                portfolio_value=pd.read_csv('Contrarian Strategy/Momentum 1/'+mass+'/L-W/'+period+'/'+str(j)+'-'+str(k)+'.csv')
                 portfolio_value['Date']=pd.to_datetime(portfolio_value['Date'])
                 portfolio_value.index=portfolio_value['Date']
                 portfolio_value.drop('Date',axis=1,inplace=True)
@@ -132,7 +132,7 @@ if __name__=='__main__':
                     portfolio_value=strategy(ins,outs,investment,k)
                 except:
                     break
-                portfolio_value.to_csv('Contrarian Strategy/Momentum 1/'+mass+'/'+period+'/'+str(j)+'-'+str(k)+'.csv')
+                portfolio_value.to_csv('Contrarian Strategy/Momentum 1/'+mass+'/L-W/'+period+'/'+str(j)+'-'+str(k)+'.csv')
                 
                 #nifty=ticker.history(start=portfolio_value.index[0],end=portfolio_value.index[-1])
                 #nifty=(nifty['Close']-nifty.loc[nifty.index[0],'Close'])/nifty.loc[nifty.index[0],'Close']
@@ -146,9 +146,9 @@ if __name__=='__main__':
     for j in range(1,max_iter):
         for k in range(1,max_iter):
             print(j,k)
-            if os.path.exists('Contrarian Strategy/Momentum 2/'+mass+'/'+period+'/'+str(j)+'-'+str(k)+'.csv'):
+            if os.path.exists('Contrarian Strategy/Momentum 2/'+mass+'/L-W/'+period+'/'+str(j)+'-'+str(k)+'.csv'):
                 print('Already Exists')
-                portfolio_value=pd.read_csv('Contrarian Strategy/Momentum 2/'+mass+'/'+period+'/'+str(j)+'-'+str(k)+'.csv')
+                portfolio_value=pd.read_csv('Contrarian Strategy/Momentum 2/'+mass+'/L-W/'+period+'/'+str(j)+'-'+str(k)+'.csv')
                 portfolio_value['Date']=pd.to_datetime(portfolio_value['Date'])
                 portfolio_value.index=portfolio_value['Date']
                 portfolio_value.drop('Date',axis=1,inplace=True)
@@ -176,7 +176,7 @@ if __name__=='__main__':
                     portfolio_value=strategy(ins,outs,investment,k)
                 except:
                     break
-                portfolio_value.to_csv('Contrarian Strategy/Momentum 2/'+mass+'/'+period+'/'+str(j)+'-'+str(k)+'.csv')
+                portfolio_value.to_csv('Contrarian Strategy/Momentum 2/'+mass+'/L-W/'+period+'/'+str(j)+'-'+str(k)+'.csv')
                 
                 #nifty=ticker.history(start=portfolio_value.index[0],end=portfolio_value.index[-1])
                 #nifty=(nifty['Close']-nifty.loc[nifty.index[0],'Close'])/nifty.loc[nifty.index[0],'Close']
@@ -190,9 +190,9 @@ if __name__=='__main__':
     for j in range(1,max_iter):
         for k in range(1,max_iter):
             print(j,k)
-            if os.path.exists('Contrarian Strategy/Momentum 3/'+period+'/'+str(j)+'-'+str(k)+'.csv'):
+            if os.path.exists('Contrarian Strategy/Momentum 3/L-W/'+period+'/'+str(j)+'-'+str(k)+'.csv'):
                 print('Already Exists')
-                portfolio_value=pd.read_csv('Contrarian Strategy/Momentum 3/'+period+'/'+str(j)+'-'+str(k)+'.csv')
+                portfolio_value=pd.read_csv('Contrarian Strategy/Momentum 3/L-W/'+period+'/'+str(j)+'-'+str(k)+'.csv')
                 portfolio_value['Date']=pd.to_datetime(portfolio_value['Date'])
                 portfolio_value.index=portfolio_value['Date']
                 portfolio_value.drop('Date',axis=1,inplace=True)
@@ -215,7 +215,7 @@ if __name__=='__main__':
                     portfolio_value=strategy(ins,outs,investment,k)
                 except:
                     break
-                portfolio_value.to_csv('Contrarian Strategy/Momentum 3/'+period+'/'+str(j)+'-'+str(k)+'.csv')
+                portfolio_value.to_csv('Contrarian Strategy/Momentum 3/L-W/'+period+'/'+str(j)+'-'+str(k)+'.csv')
                 
                 #nifty=ticker.history(start=portfolio_value.index[0],end=portfolio_value.index[-1])
                 #nifty=(nifty['Close']-nifty.loc[nifty.index[0],'Close'])/nifty.loc[nifty.index[0],'Close']
