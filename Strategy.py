@@ -116,7 +116,7 @@ if __name__=='__main__':
                 nifty=ticker.history(start=portfolio_value.index[0],end=portfolio_value.index[-1])
                 nifty=(nifty['Close']-nifty.loc[nifty.index[0],'Close'])/nifty.loc[nifty.index[0],'Close']
                 
-                portfolio_value=(portfolio_value-k*investment)/investment
+                portfolio_value=(portfolio_value-k*investment)/k*investment
                 portfolio_value.plot()
                 nifty.plot()
                 plt.show()
@@ -137,7 +137,7 @@ if __name__=='__main__':
                 nifty=ticker.history(start=portfolio_value.index[0],end=portfolio_value.index[-1])
                 nifty=(nifty['Close']-nifty.loc[nifty.index[0],'Close'])/nifty.loc[nifty.index[0],'Close']
                 
-                portfolio_value=(portfolio_value-k*investment)/investment
+                portfolio_value=(portfolio_value-k*investment)/k*investment
                 portfolio_value.plot()
                 nifty.plot()
                 plt.show()
@@ -156,7 +156,7 @@ if __name__=='__main__':
                 nifty=ticker.history(start=portfolio_value.index[0],end=portfolio_value.index[-1])
                 nifty=(nifty['Close']-nifty.loc[nifty.index[0],'Close'])/nifty.loc[nifty.index[0],'Close']
                 
-                portfolio_value=(portfolio_value-k*investment)/investment
+                portfolio_value=(portfolio_value-k*investment)/k*investment
                 portfolio_value.plot()
                 nifty.plot()
                 plt.show()
@@ -181,7 +181,7 @@ if __name__=='__main__':
                 nifty=ticker.history(start=portfolio_value.index[0],end=portfolio_value.index[-1])
                 nifty=(nifty['Close']-nifty.loc[nifty.index[0],'Close'])/nifty.loc[nifty.index[0],'Close']
                 
-                portfolio_value=(portfolio_value-k*investment)/investment
+                portfolio_value=(portfolio_value-k*investment)/k*investment
                 portfolio_value.plot()
                 nifty.plot()
                 plt.show()
@@ -200,7 +200,7 @@ if __name__=='__main__':
                 nifty=ticker.history(start=portfolio_value.index[0],end=portfolio_value.index[-1])
                 nifty=(nifty['Close']-nifty.loc[nifty.index[0],'Close'])/nifty.loc[nifty.index[0],'Close']
             
-                portfolio_value=(portfolio_value-k*investment)/investment
+                portfolio_value=(portfolio_value-k*investment)/k*investment
                 portfolio_value.plot()
                 nifty.plot()
                 plt.show()
@@ -220,7 +220,7 @@ if __name__=='__main__':
                 nifty=ticker.history(start=portfolio_value.index[0],end=portfolio_value.index[-1])
                 nifty=(nifty['Close']-nifty.loc[nifty.index[0],'Close'])/nifty.loc[nifty.index[0],'Close']
                 
-                portfolio_value=(portfolio_value-k*investment)/investment
+                portfolio_value=(portfolio_value-k*investment)/k*investment
                 portfolio_value.plot()
                 nifty.plot()
                 plt.show()
