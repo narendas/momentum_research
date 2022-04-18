@@ -4,6 +4,17 @@ import pandas as pd
 import numpy as np
 
 
+def var_historic(df):
+    if isinstance(df, pd.DataFrame):
+        return df.aggregate(var_historic)
+    if isinstance(df, pd.Series):
+        return -np.percentile(df,5)
+
+def max_dd(df):
+    previous_peaks=df.cummax()
+    drawdown=(df-previous_peaks)/(previous_peaks)
+    
+    return drawdown.min()[0]
 def portfolio_chart(period):
     strategies=['Strategy','Contrarian Strategy']
 
@@ -13,10 +24,14 @@ def portfolio_chart(period):
 
     portfolios=['W','L','L-W','W-L']
 
-    columns=(('Strategy','Momentum'),('Strategy','Portfolio'),('Strategy','Criterion'),('Strategy','Strategy'),('Summary','Mean'),('Summary','STD'),('Risk Measures','Fin Wealth'))
+    columns=(('Strategy','Momentum'),('Strategy','Portfolio'),
+             ('Strategy','Criterion'),('Strategy','Strategy'),
+             ('Summary','Mean'),('Summary','STD'),
+             ('Risk Measures','Fin Wealth'),('Risk Measures','Sharpe Ratio'),
+             ('Risk Measures','Var 95%'),('Risk Measures','Max DD'))
     mux=pd.MultiIndex.from_tuples(columns)
     final_df=pd.DataFrame(columns=mux)
-      
+    
     for strategy in strategies:
         for momentum in momentums:
             if momentum=='Momentum 3':
@@ -46,17 +61,24 @@ def portfolio_chart(period):
                                     
                                     fin=fin_w-fin_l
                                     
+                                    winner_value=winner_value.resample('M').last()
+                                    loser_value=loser_value.resample('M').last()
                                     winner_value=100*np.log(winner_value/winner_value.shift(1)).dropna()
                                     loser_value=100*np.log(loser_value/loser_value.shift(1)).dropna()
                                     
+                                    
+                                    port_value=winner_value-loser_value
                                     mean_w=winner_value.mean()[0]
-                                    std_w=winner_value.std()[0]
                                     mean_l=loser_value.mean()[0]
-                                    std_l=loser_value.std()[0]
+                                    
                                     
                                     mean=mean_w-mean_l
-                                    std=std_w-std_l
+                                    std=port_value.std()[0]
                                     
+                                    sp=mean/std
+                                    var=var_historic(port_value)[0]
+                                    mdd=max_dd(port_value)
+
                                     d[('Strategy','Momentum')]=momentum
                                     d[('Strategy','Portfolio')]='W-L'
                                     d[('Strategy','Criterion')]=file[:-4]
@@ -66,6 +88,9 @@ def portfolio_chart(period):
                                     d[('Summary','STD')]=std
                                     
                                     d[('Risk Measures','Fin Wealth')]=fin
+                                    d[('Risk Measures','Sharpe Ratio')]=sp
+                                    d[('Risk Measures','Var 95%')]=var
+                                    d[('Risk Measures','Max DD')]=mdd
                                     
                                 else:
                                     d={}
@@ -74,11 +99,16 @@ def portfolio_chart(period):
                                     port_value.index=pd.to_datetime(port_value.index)
                                     
                                     fin=port_value.loc[port_value.index[-1],'Capital']/port_value.loc[port_value.index[0],'Capital']
+                                    
+                                    port_value=port_value.resample('M').last()
                                     port_value=100*np.log(port_value/port_value.shift(1)).dropna()
                                     
                                     mean=port_value.mean()[0]
                                     std=port_value.std()[0]
                                     
+                                    sp=mean/std
+                                    var=var_historic(port_value)[0]
+                                    mdd=max_dd(port_value)
                                     d[('Strategy','Momentum')]=momentum
                                     d[('Strategy','Portfolio')]=portfolio
                                     d[('Strategy','Criterion')]=file[:-4]
@@ -88,6 +118,9 @@ def portfolio_chart(period):
                                     d[('Summary','STD')]=std
                                     
                                     d[('Risk Measures','Fin Wealth')]=fin
+                                    d[('Risk Measures','Sharpe Ratio')]=sp
+                                    d[('Risk Measures','Var 95%')]=var
+                                    d[('Risk Measures','Max DD')]=mdd
                                     
                             
                             else:
@@ -108,15 +141,22 @@ def portfolio_chart(period):
                                     
                                     fin=fin_l-fin_w
                                     
+                                    
+                                    winner_value=winner_value.resample('M').last()
+                                    loser_value=loser_value.resample('M').last()
                                     winner_value=100*np.log(winner_value/winner_value.shift(1)).dropna()
                                     loser_value=100*np.log(loser_value/loser_value.shift(1)).dropna()
-                                    mean_w=winner_value.mean()[0]
-                                    std_w=winner_value.std()[0]
-                                    mean_l=loser_value.mean()[0]
-                                    std_l=loser_value.std()[0]
                                     
+                                    
+                                    port_value=loser_value-winner_value
+                                    mean_w=winner_value.mean()[0]
+                                    mean_l=loser_value.mean()[0]
                                     mean=mean_l-mean_w
-                                    std=std_l-std_w
+                                    std=port_value.std()[0]
+                                    
+                                    sp=mean/std
+                                    var=var_historic(port_value)[0]
+                                    mdd=max_dd(port_value)
                                     
                                     d[('Strategy','Momentum')]=momentum
                                     d[('Strategy','Portfolio')]='L-W'
@@ -127,6 +167,9 @@ def portfolio_chart(period):
                                     d[('Summary','STD')]=std
                                     
                                     d[('Risk Measures','Fin Wealth')]=fin
+                                    d[('Risk Measures','Sharpe Ratio')]=sp
+                                    d[('Risk Measures','Var 95%')]=var
+                                    d[('Risk Measures','Max DD')]=mdd
                                     
                                 else:
                                     d={}
@@ -135,10 +178,15 @@ def portfolio_chart(period):
                                     port_value.index=pd.to_datetime(port_value.index)
                                     
                                     fin=port_value.loc[port_value.index[-1],'Capital']/port_value.loc[port_value.index[0],'Capital']
+                                    port_value=port_value.resample('M').last()
                                     port_value=100*np.log(port_value/port_value.shift(1)).dropna()
                                     
                                     mean=port_value.mean()[0]
                                     std=port_value.std()[0]
+                                    
+                                    sp=mean/std
+                                    var=var_historic(port_value)[0]
+                                    mdd=max_dd(port_value)
                                     
                                     d[('Strategy','Momentum')]=momentum
                                     d[('Strategy','Portfolio')]=portfolio
@@ -149,6 +197,9 @@ def portfolio_chart(period):
                                     d[('Summary','STD')]=std
                                     
                                     d[('Risk Measures','Fin Wealth')]=fin
+                                    d[('Risk Measures','Sharpe Ratio')]=sp
+                                    d[('Risk Measures','Var 95%')]=var
+                                    d[('Risk Measures','Max DD')]=mdd
                                     
                             final_df=final_df.append(d,ignore_index=True)
             
@@ -159,7 +210,6 @@ def portfolio_chart(period):
                         path=os.path.join(strategy,momentum,turnover,portfolio,period)
                         if os.path.exists(path):
                             for file in os.listdir(path):
-                                
                                 if strategy=='Strategy':
                                     if portfolio=='W-L':
                                         d={}
@@ -180,15 +230,21 @@ def portfolio_chart(period):
                                         
                                         fin=fin_w-fin_l
                                         
+                                        winner_value=winner_value.resample('M').last()
+                                        loser_value=loser_value.resample('M').last()
                                         winner_value=100*np.log(winner_value/winner_value.shift(1)).dropna()
                                         loser_value=100*np.log(loser_value/loser_value.shift(1)).dropna()
+                                        
+                                        port_value=winner_value-loser_value
                                         mean_w=winner_value.mean()[0]
-                                        std_w=winner_value.std()[0]
                                         mean_l=loser_value.mean()[0]
-                                        std_l=loser_value.std()[0]
                                         
                                         mean=mean_w-mean_l
-                                        std=std_w-std_l
+                                        std=port_value.std()[0]
+                                        
+                                        sp=mean/std
+                                        var=var_historic(port_value)[0]
+                                        mdd=max_dd(port_value)
                                         
                                         d[('Strategy','Momentum')]=momentum
                                         d[('Strategy','Portfolio')]='W-L'
@@ -199,7 +255,9 @@ def portfolio_chart(period):
                                         d[('Summary','STD')]=std
                                         
                                         d[('Risk Measures','Fin Wealth')]=fin
-        
+                                        d[('Risk Measures','Sharpe Ratio')]=sp
+                                        d[('Risk Measures','Var 95%')]=var
+                                        d[('Risk Measures','Max DD')]=mdd
                                     else:
                                         d={}
                                         file_path=os.path.join(path,file)
@@ -207,10 +265,15 @@ def portfolio_chart(period):
                                         port_value.index=pd.to_datetime(port_value.index)
                                         
                                         fin=port_value.loc[port_value.index[-1],'Capital']/port_value.loc[port_value.index[0],'Capital']
+                                        port_value=port_value.resample('M').last()
                                         port_value=100*np.log(port_value/port_value.shift(1)).dropna()
                                         
                                         mean=port_value.mean()[0]
                                         std=port_value.std()[0]
+                                        
+                                        sp=mean/std
+                                        var=var_historic(port_value)[0]
+                                        mdd=max_dd(port_value)
                                         
                                         d[('Strategy','Momentum')]=momentum
                                         d[('Strategy','Portfolio')]=portfolio
@@ -221,6 +284,9 @@ def portfolio_chart(period):
                                         d[('Summary','STD')]=std
                                         
                                         d[('Risk Measures','Fin Wealth')]=fin
+                                        d[('Risk Measures','Sharpe Ratio')]=sp
+                                        d[('Risk Measures','Var 95%')]=var
+                                        d[('Risk Measures','Max DD')]=mdd
                                 
                                 else:
                                     if portfolio=='L-W':
@@ -240,15 +306,21 @@ def portfolio_chart(period):
                                         
                                         fin=fin_l-fin_w
                                         
+                                        winner_value=winner_value.resample('M').last()
+                                        loser_value=loser_value.resample('M').last()
                                         winner_value=100*np.log(winner_value/winner_value.shift(1)).dropna()
                                         loser_value=100*np.log(loser_value/loser_value.shift(1)).dropna()
+                                        
+                                        port_value=loser_value-winner_value
                                         mean_w=winner_value.mean()[0]
-                                        std_w=winner_value.std()[0]
                                         mean_l=loser_value.mean()[0]
-                                        std_l=loser_value.std()[0]
                                         
                                         mean=mean_l-mean_w
-                                        std=std_l-std_w
+                                        std=port_value.std()[0]
+                                        
+                                        sp=mean/std
+                                        var=var_historic(port_value)[0]
+                                        mdd=max_dd(port_value)
                                         
                                         d[('Strategy','Momentum')]=momentum
                                         d[('Strategy','Portfolio')]='L-W'
@@ -259,6 +331,9 @@ def portfolio_chart(period):
                                         d[('Summary','STD')]=std
                                         
                                         d[('Risk Measures','Fin Wealth')]=fin
+                                        d[('Risk Measures','Sharpe Ratio')]=sp
+                                        d[('Risk Measures','Var 95%')]=var
+                                        d[('Risk Measures','Max DD')]=mdd
                                         
                                     else:
                                         d={}
@@ -267,10 +342,15 @@ def portfolio_chart(period):
                                         port_value.index=pd.to_datetime(port_value.index)
                                         
                                         fin=port_value.loc[port_value.index[-1],'Capital']/port_value.loc[port_value.index[0],'Capital']
+                                        port_value=port_value.resample('M').last()
                                         port_value=100*np.log(port_value/port_value.shift(1)).dropna()
                                         
                                         mean=port_value.mean()[0]
                                         std=port_value.std()[0]
+                                        
+                                        sp=mean/std
+                                        var=var_historic(port_value)[0]
+                                        mdd=max_dd(port_value)
                                         
                                         d[('Strategy','Momentum')]=momentum
                                         d[('Strategy','Portfolio')]=portfolio
@@ -281,6 +361,9 @@ def portfolio_chart(period):
                                         d[('Summary','STD')]=std
                                         
                                         d[('Risk Measures','Fin Wealth')]=fin
+                                        d[('Risk Measures','Sharpe Ratio')]=sp
+                                        d[('Risk Measures','Var 95%')]=var
+                                        d[('Risk Measures','Max DD')]=mdd
                                         
                                 final_df=final_df.append(d,ignore_index=True)
     
@@ -309,7 +392,7 @@ def get_best_df(df):
     best_df=pd.DataFrame(columns=final_df.columns)
     for momentum in list(final_df[('Strategy','Momentum')].unique()):
         momentum_df=final_df[final_df[('Strategy','Momentum')]==momentum].reset_index(drop=True)
-        for num in range(1,4):
+        for num in range(1,8):
             num=str(num)+'-'
             try:
                 strategy_df=momentum_df[momentum_df[('Strategy','Criterion')].str.startswith(num)].reset_index(drop=True)
