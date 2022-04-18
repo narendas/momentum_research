@@ -44,6 +44,8 @@ def portfolio_chart(period):
                                     
                                     fin=fin_w-fin_l
                                     
+                                    winner_value=winner_value.resample('M').last()
+                                    loser_value=loser_value.resample('M').last()
                                     winner_value=100*np.log(winner_value/winner_value.shift(1)).dropna()
                                     loser_value=100*np.log(loser_value/loser_value.shift(1)).dropna()
                                     
@@ -72,6 +74,8 @@ def portfolio_chart(period):
                                     port_value.index=pd.to_datetime(port_value.index)
                                     
                                     fin=port_value.loc[port_value.index[-1],'Capital']/port_value.loc[port_value.index[0],'Capital']
+                                    
+                                    port_value=port_value.resample('M').last()
                                     port_value=100*np.log(port_value/port_value.shift(1)).dropna()
                                     
                                     mean=port_value.mean()[0]
@@ -106,6 +110,8 @@ def portfolio_chart(period):
                                     
                                     fin=fin_l-fin_w
                                     
+                                    winner_value=winner_value.resample('M').last()
+                                    loser_value=loser_value.resample('M').last()
                                     winner_value=100*np.log(winner_value/winner_value.shift(1)).dropna()
                                     loser_value=100*np.log(loser_value/loser_value.shift(1)).dropna()
                                     mean_w=winner_value.mean()[0]
@@ -133,6 +139,8 @@ def portfolio_chart(period):
                                     port_value.index=pd.to_datetime(port_value.index)
                                     
                                     fin=port_value.loc[port_value.index[-1],'Capital']/port_value.loc[port_value.index[0],'Capital']
+                                    
+                                    port_value=port_value.resample('M').last()
                                     port_value=100*np.log(port_value/port_value.shift(1)).dropna()
                                     
                                     mean=port_value.mean()[0]
@@ -157,7 +165,6 @@ def portfolio_chart(period):
                         path=os.path.join(strategy,momentum,turnover,portfolio,period)
                         if os.path.exists(path):
                             for file in os.listdir(path):
-                                
                                 if strategy=='Strategy':
                                     if portfolio=='W-L':
                                         d={}
@@ -176,6 +183,8 @@ def portfolio_chart(period):
                                         
                                         fin=fin_w-fin_l
                                         
+                                        winner_value=winner_value.resample('M').last()
+                                        loser_value=loser_value.resample('M').last()
                                         winner_value=100*np.log(winner_value/winner_value.shift(1)).dropna()
                                         loser_value=100*np.log(loser_value/loser_value.shift(1)).dropna()
                                         mean_w=winner_value.mean()[0]
@@ -203,6 +212,8 @@ def portfolio_chart(period):
                                         port_value.index=pd.to_datetime(port_value.index)
                                         
                                         fin=port_value.loc[port_value.index[-1],'Capital']/port_value.loc[port_value.index[0],'Capital']
+                                        
+                                        port_value=port_value.resample('M').last()
                                         port_value=100*np.log(port_value/port_value.shift(1)).dropna()
                                         
                                         mean=port_value.mean()[0]
@@ -236,6 +247,8 @@ def portfolio_chart(period):
                                         
                                         fin=fin_l-fin_w
                                         
+                                        winner_value=winner_value.resample('M').last()
+                                        loser_value=loser_value.resample('M').last()
                                         winner_value=100*np.log(winner_value/winner_value.shift(1)).dropna()
                                         loser_value=100*np.log(loser_value/loser_value.shift(1)).dropna()
                                         mean_w=winner_value.mean()[0]
@@ -263,6 +276,8 @@ def portfolio_chart(period):
                                         port_value.index=pd.to_datetime(port_value.index)
                                         
                                         fin=port_value.loc[port_value.index[-1],'Capital']/port_value.loc[port_value.index[0],'Capital']
+                                        
+                                        port_value=port_value.resample('M').last()
                                         port_value=100*np.log(port_value/port_value.shift(1)).dropna()
                                         
                                         mean=port_value.mean()[0]
