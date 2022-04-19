@@ -378,33 +378,29 @@ def get_best_df(df):
         for criterion in list(momentum_df[('Strategy','Criterion')].unique()):
             strategy_df=momentum_df[momentum_df[('Strategy','Criterion')]==criterion].reset_index(drop=True)
             w_l=strategy_df[strategy_df[('Strategy','Portfolio')]=='W-L']
-            w_l=w_l[('Summary','Mean')].item()
+            #w_l=w_l[('Summary','Mean')].item()
+            w_l=w_l[('Risk Measures','Fin Wealth')].item()
             
             l_w=strategy_df[strategy_df[('Strategy','Portfolio')]=='L-W']
-            l_w=l_w[('Summary','Mean')].item()
+            #l_w=l_w[('Summary','Mean')].item()
+            l_w=l_w[('Risk Measures','Fin Wealth')].item()
             
             if w_l>l_w:
                 final_df=final_df.append(strategy_df[strategy_df[('Strategy','Strategy')]=='Strategy'],ignore_index=True)
             elif w_l<l_w:
                 final_df=final_df.append(strategy_df[strategy_df[('Strategy','Strategy')]=='Contrarian Strategy'],ignore_index=True)
-    
-    #This for loop returns best j-k portfolio with the highest profit
+
+    #This for loop returns best j-k portfolio with the highest mean
     best_df=pd.DataFrame(columns=final_df.columns)
     for momentum in list(final_df[('Strategy','Momentum')].unique()):
         momentum_df=final_df[final_df[('Strategy','Momentum')]==momentum].reset_index(drop=True)
-        for num in range(1,8):
-            num=str(num)+'-'
-            try:
-                strategy_df=momentum_df[momentum_df[('Strategy','Criterion')].str.startswith(num)].reset_index(drop=True)
-                max_strategy_df=strategy_df[strategy_df[('Strategy','Portfolio')].isin(['W-L','L-W'])].reset_index(drop=True)
-                max_mean=max_strategy_df[max_strategy_df[('Summary','Mean')]==max(max_strategy_df[('Summary','Mean')])].reset_index(drop=True)
-                
-                max_mean=max_mean['Strategy']['Criterion'][0]
-                max_mean=strategy_df[strategy_df[('Strategy','Criterion')]==max_mean]
-                
-                best_df=best_df.append(max_mean,ignore_index=True)
-            except:
-                pass
+        max_strategy_df=momentum_df[momentum_df[('Strategy','Portfolio')].isin(['W-L','L-W'])].reset_index(drop=True)
+        max_wealth=max_strategy_df[max_strategy_df[('Risk Measures','Fin Wealth')]==max(max_strategy_df[('Risk Measures','Fin Wealth')])].reset_index(drop=True)
+        
+        max_wealth=max_wealth['Strategy']['Criterion'][0]
+        max_wealth=momentum_df[momentum_df[('Strategy','Criterion')]==max_wealth]
+        
+        best_df=best_df.append(max_wealth,ignore_index=True)
     return best_df
 
 
