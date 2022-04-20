@@ -152,3 +152,11 @@ end=date(2022,1,1)
 for period in ['Day','Week','Month','Year']:
     resample=period[0]
     matrix=momentum_matrix3(velocity,resample,start,end,period)
+
+mass='Unity'
+velocity='Log Returns'
+start=date(2014,1,1)
+end=date(2022,1,1)
+for period in ['Day','Week','Month','Year']:
+    resample=period[0]
+    matrix=momentum_matrix(mass,velocity,resample,start,end,period)
