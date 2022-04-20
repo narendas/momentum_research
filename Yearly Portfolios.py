@@ -16,6 +16,8 @@ def max_dd(df):
     
     return drawdown.min()[0]
 def portfolio_chart(period):
+    
+    port_type=['Physical Momentum','Traditional Momentum']
     strategies=['Strategy','Contrarian Strategy']
 
     momentums=['Momentum 1','Momentum 2','Momentum 3']
@@ -32,26 +34,356 @@ def portfolio_chart(period):
     mux=pd.MultiIndex.from_tuples(columns)
     final_df=pd.DataFrame(columns=mux)
     
-    for strategy in strategies:
-        for momentum in momentums:
-            if momentum=='Momentum 3':
-                for portfolio in portfolios:
+    for ptype in port_type:
+        if  ptype=='Physical Momentum':
+            for strategy in strategies:                    
+                for momentum in momentums:
+                    if momentum=='Momentum 3':
+                        for portfolio in portfolios:
+                            path=os.path.join(strategy,momentum,portfolio,period)
+                            if os.path.exists(path):
+                                for file in os.listdir(path):
+                                    
+                                    if strategy=='Strategy':
+                                        if portfolio=='W-L':
+                                            d={}
+                                            winner_path=os.path.join(strategy,momentum,'W',period,file)
+                                            loser_path=os.path.join(strategy,momentum,'L',period,file)
+                                            
+                                            try:
+                                                winner_value=pd.read_csv(winner_path,index_col=('Date'))
+                                                winner_value.index=pd.to_datetime(winner_value.index)
+                                            except:
+                                                break
+                                            loser_value=pd.read_csv(loser_path,index_col=('Date'))
+                                            loser_value.index=pd.to_datetime(loser_value.index)
+                                            
+                                            
+                                            fin_w=winner_value.loc[winner_value.index[-1],'Capital']/winner_value.loc[winner_value.index[0],'Capital']
+                                            fin_l=loser_value.loc[loser_value.index[-1],'Capital']/loser_value.loc[loser_value.index[0],'Capital']
+                                            
+                                            fin=fin_w-fin_l
+                                            
+                                            winner_value=winner_value.resample('M').last()
+                                            loser_value=loser_value.resample('M').last()
+                                            winner_value=100*np.log(winner_value/winner_value.shift(1)).dropna()
+                                            loser_value=100*np.log(loser_value/loser_value.shift(1)).dropna()
+                                            
+                                            
+                                            port_value=winner_value-loser_value
+                                            mean_w=winner_value.mean()[0]
+                                            mean_l=loser_value.mean()[0]
+                                            
+                                            
+                                            mean=mean_w-mean_l
+                                            std=port_value.std()[0]
+                                            
+                                            sp=mean/std
+                                            var=var_historic(port_value)[0]
+                                            mdd=max_dd(port_value)
+        
+                                            d[('Strategy','Momentum')]=momentum
+                                            d[('Strategy','Portfolio')]='W-L'
+                                            d[('Strategy','Criterion')]=file[:-4]
+                                            d[('Strategy','Strategy')]=strategy
+                                            
+                                            d[('Summary','Mean')]=mean
+                                            d[('Summary','STD')]=std
+                                            
+                                            d[('Risk Measures','Fin Wealth')]=fin
+                                            d[('Risk Measures','Sharpe Ratio')]=sp
+                                            d[('Risk Measures','Var 95%')]=var
+                                            d[('Risk Measures','Max DD')]=mdd
+                                            
+                                        else:
+                                            d={}
+                                            file_path=os.path.join(path,file)
+                                            port_value=pd.read_csv(file_path,index_col=('Date'))
+                                            port_value.index=pd.to_datetime(port_value.index)
+                                            
+                                            fin=port_value.loc[port_value.index[-1],'Capital']/port_value.loc[port_value.index[0],'Capital']
+                                            
+                                            port_value=port_value.resample('M').last()
+                                            port_value=100*np.log(port_value/port_value.shift(1)).dropna()
+                                            
+                                            mean=port_value.mean()[0]
+                                            std=port_value.std()[0]
+                                            
+                                            sp=mean/std
+                                            var=var_historic(port_value)[0]
+                                            mdd=max_dd(port_value)
+                                            d[('Strategy','Momentum')]=momentum
+                                            d[('Strategy','Portfolio')]=portfolio
+                                            d[('Strategy','Criterion')]=file[:-4]
+                                            d[('Strategy','Strategy')]=strategy
+                                            
+                                            d[('Summary','Mean')]=mean
+                                            d[('Summary','STD')]=std
+                                            
+                                            d[('Risk Measures','Fin Wealth')]=fin
+                                            d[('Risk Measures','Sharpe Ratio')]=sp
+                                            d[('Risk Measures','Var 95%')]=var
+                                            d[('Risk Measures','Max DD')]=mdd
+                                            
+                                    
+                                    else:
+                                        if portfolio=='L-W':
+                                            d={}
+                                            winner_path=os.path.join(strategy,momentum,'W',period,file)
+                                            loser_path=os.path.join(strategy,momentum,'L',period,file)
+                                            
+                                            winner_value=pd.read_csv(winner_path,index_col=('Date'))
+                                            winner_value.index=pd.to_datetime(winner_value.index)
+                                            
+                                            loser_value=pd.read_csv(loser_path,index_col=('Date'))
+                                            loser_value.index=pd.to_datetime(loser_value.index)
+                                            
+                                            
+                                            fin_w=winner_value.loc[winner_value.index[-1],'Capital']/winner_value.loc[winner_value.index[0],'Capital']
+                                            fin_l=loser_value.loc[loser_value.index[-1],'Capital']/loser_value.loc[loser_value.index[0],'Capital']
+                                            
+                                            fin=fin_l-fin_w
+                                            
+                                            
+                                            winner_value=winner_value.resample('M').last()
+                                            loser_value=loser_value.resample('M').last()
+                                            winner_value=100*np.log(winner_value/winner_value.shift(1)).dropna()
+                                            loser_value=100*np.log(loser_value/loser_value.shift(1)).dropna()
+                                            
+                                            
+                                            port_value=loser_value-winner_value
+                                            mean_w=winner_value.mean()[0]
+                                            mean_l=loser_value.mean()[0]
+                                            mean=mean_l-mean_w
+                                            std=port_value.std()[0]
+                                            
+                                            sp=mean/std
+                                            var=var_historic(port_value)[0]
+                                            mdd=max_dd(port_value)
+                                            
+                                            d[('Strategy','Momentum')]=momentum
+                                            d[('Strategy','Portfolio')]='L-W'
+                                            d[('Strategy','Criterion')]=file[:-4]
+                                            d[('Strategy','Strategy')]=strategy
+                                            
+                                            d[('Summary','Mean')]=mean
+                                            d[('Summary','STD')]=std
+                                            
+                                            d[('Risk Measures','Fin Wealth')]=fin
+                                            d[('Risk Measures','Sharpe Ratio')]=sp
+                                            d[('Risk Measures','Var 95%')]=var
+                                            d[('Risk Measures','Max DD')]=mdd
+                                            
+                                        else:
+                                            d={}
+                                            file_path=os.path.join(path,file)
+                                            port_value=pd.read_csv(file_path,index_col=('Date'))
+                                            port_value.index=pd.to_datetime(port_value.index)
+                                            
+                                            fin=port_value.loc[port_value.index[-1],'Capital']/port_value.loc[port_value.index[0],'Capital']
+                                            port_value=port_value.resample('M').last()
+                                            port_value=100*np.log(port_value/port_value.shift(1)).dropna()
+                                            
+                                            mean=port_value.mean()[0]
+                                            std=port_value.std()[0]
+                                            
+                                            sp=mean/std
+                                            var=var_historic(port_value)[0]
+                                            mdd=max_dd(port_value)
+                                            
+                                            d[('Strategy','Momentum')]=momentum
+                                            d[('Strategy','Portfolio')]=portfolio
+                                            d[('Strategy','Criterion')]=file[:-4]
+                                            d[('Strategy','Strategy')]=strategy
+                                            
+                                            d[('Summary','Mean')]=mean
+                                            d[('Summary','STD')]=std
+                                            
+                                            d[('Risk Measures','Fin Wealth')]=fin
+                                            d[('Risk Measures','Sharpe Ratio')]=sp
+                                            d[('Risk Measures','Var 95%')]=var
+                                            d[('Risk Measures','Max DD')]=mdd
+                                            
+                                    final_df=final_df.append(d,ignore_index=True)
                     
-                    path=os.path.join(strategy,momentum,portfolio,period)
+                    else:
+                        for turnover in turnover_rates:
+                            for portfolio in portfolios:                       
+                                path=os.path.join(strategy,momentum,turnover,portfolio,period)
+                                if os.path.exists(path):
+                                    for file in os.listdir(path):
+                                        if strategy=='Strategy':
+                                            if portfolio=='W-L':
+                                                d={}
+                                                winner_path=os.path.join(strategy,momentum,turnover,'W',period,file)
+                                                loser_path=os.path.join(strategy,momentum,turnover,'L',period,file)
+                                                
+                                                try:
+                                                    winner_value=pd.read_csv(winner_path,index_col=('Date'))
+                                                    winner_value.index=pd.to_datetime(winner_value.index)
+                                                except:
+                                                    break
+                                                loser_value=pd.read_csv(loser_path,index_col=('Date'))
+                                                loser_value.index=pd.to_datetime(loser_value.index)
+                                                
+                                                
+                                                fin_w=winner_value.loc[winner_value.index[-1],'Capital']/winner_value.loc[winner_value.index[0],'Capital']
+                                                fin_l=loser_value.loc[loser_value.index[-1],'Capital']/loser_value.loc[loser_value.index[0],'Capital']
+                                                
+                                                fin=fin_w-fin_l
+                                                
+                                                winner_value=winner_value.resample('M').last()
+                                                loser_value=loser_value.resample('M').last()
+                                                winner_value=100*np.log(winner_value/winner_value.shift(1)).dropna()
+                                                loser_value=100*np.log(loser_value/loser_value.shift(1)).dropna()
+                                                
+                                                port_value=winner_value-loser_value
+                                                mean_w=winner_value.mean()[0]
+                                                mean_l=loser_value.mean()[0]
+                                                
+                                                mean=mean_w-mean_l
+                                                std=port_value.std()[0]
+                                                
+                                                sp=mean/std
+                                                var=var_historic(port_value)[0]
+                                                mdd=max_dd(port_value)
+                                                
+                                                d[('Strategy','Momentum')]=momentum
+                                                d[('Strategy','Portfolio')]='W-L'
+                                                d[('Strategy','Criterion')]=file[:-4]
+                                                d[('Strategy','Strategy')]=strategy
+                                                
+                                                d[('Summary','Mean')]=mean
+                                                d[('Summary','STD')]=std
+                                                
+                                                d[('Risk Measures','Fin Wealth')]=fin
+                                                d[('Risk Measures','Sharpe Ratio')]=sp
+                                                d[('Risk Measures','Var 95%')]=var
+                                                d[('Risk Measures','Max DD')]=mdd
+                                            else:
+                                                d={}
+                                                file_path=os.path.join(path,file)
+                                                port_value=pd.read_csv(file_path,index_col=('Date'))
+                                                port_value.index=pd.to_datetime(port_value.index)
+                                                
+                                                fin=port_value.loc[port_value.index[-1],'Capital']/port_value.loc[port_value.index[0],'Capital']
+                                                port_value=port_value.resample('M').last()
+                                                port_value=100*np.log(port_value/port_value.shift(1)).dropna()
+                                                
+                                                mean=port_value.mean()[0]
+                                                std=port_value.std()[0]
+                                                
+                                                sp=mean/std
+                                                var=var_historic(port_value)[0]
+                                                mdd=max_dd(port_value)
+                                                
+                                                d[('Strategy','Momentum')]=momentum
+                                                d[('Strategy','Portfolio')]=portfolio
+                                                d[('Strategy','Criterion')]=file[:-4]
+                                                d[('Strategy','Strategy')]=strategy
+                                                
+                                                d[('Summary','Mean')]=mean
+                                                d[('Summary','STD')]=std
+                                                
+                                                d[('Risk Measures','Fin Wealth')]=fin
+                                                d[('Risk Measures','Sharpe Ratio')]=sp
+                                                d[('Risk Measures','Var 95%')]=var
+                                                d[('Risk Measures','Max DD')]=mdd
+                                        
+                                        else:
+                                            if portfolio=='L-W':
+                                                d={}
+                                                winner_path=os.path.join(strategy,momentum,turnover,'W',period,file)
+                                                loser_path=os.path.join(strategy,momentum,turnover,'L',period,file)
+                                                
+                                                winner_value=pd.read_csv(winner_path,index_col=('Date'))
+                                                winner_value.index=pd.to_datetime(winner_value.index)
+                                                
+                                                loser_value=pd.read_csv(loser_path,index_col=('Date'))
+                                                loser_value.index=pd.to_datetime(loser_value.index)
+                                                
+                                                
+                                                fin_w=winner_value.loc[winner_value.index[-1],'Capital']/winner_value.loc[winner_value.index[0],'Capital']
+                                                fin_l=loser_value.loc[loser_value.index[-1],'Capital']/loser_value.loc[loser_value.index[0],'Capital']
+                                                
+                                                fin=fin_l-fin_w
+                                                
+                                                winner_value=winner_value.resample('M').last()
+                                                loser_value=loser_value.resample('M').last()
+                                                winner_value=100*np.log(winner_value/winner_value.shift(1)).dropna()
+                                                loser_value=100*np.log(loser_value/loser_value.shift(1)).dropna()
+                                                
+                                                port_value=loser_value-winner_value
+                                                mean_w=winner_value.mean()[0]
+                                                mean_l=loser_value.mean()[0]
+                                                
+                                                mean=mean_l-mean_w
+                                                std=port_value.std()[0]
+                                                
+                                                sp=mean/std
+                                                var=var_historic(port_value)[0]
+                                                mdd=max_dd(port_value)
+                                                
+                                                d[('Strategy','Momentum')]=momentum
+                                                d[('Strategy','Portfolio')]='L-W'
+                                                d[('Strategy','Criterion')]=file[:-4]
+                                                d[('Strategy','Strategy')]=strategy
+                                                
+                                                d[('Summary','Mean')]=mean
+                                                d[('Summary','STD')]=std
+                                                
+                                                d[('Risk Measures','Fin Wealth')]=fin
+                                                d[('Risk Measures','Sharpe Ratio')]=sp
+                                                d[('Risk Measures','Var 95%')]=var
+                                                d[('Risk Measures','Max DD')]=mdd
+                                                
+                                            else:
+                                                d={}
+                                                file_path=os.path.join(path,file)
+                                                port_value=pd.read_csv(file_path,index_col=('Date'))
+                                                port_value.index=pd.to_datetime(port_value.index)
+                                                
+                                                fin=port_value.loc[port_value.index[-1],'Capital']/port_value.loc[port_value.index[0],'Capital']
+                                                port_value=port_value.resample('M').last()
+                                                port_value=100*np.log(port_value/port_value.shift(1)).dropna()
+                                                
+                                                mean=port_value.mean()[0]
+                                                std=port_value.std()[0]
+                                                
+                                                sp=mean/std
+                                                var=var_historic(port_value)[0]
+                                                mdd=max_dd(port_value)
+                                                
+                                                d[('Strategy','Momentum')]=momentum
+                                                d[('Strategy','Portfolio')]=portfolio
+                                                d[('Strategy','Criterion')]=file[:-4]
+                                                d[('Strategy','Strategy')]=strategy
+                                                
+                                                d[('Summary','Mean')]=mean
+                                                d[('Summary','STD')]=std
+                                                
+                                                d[('Risk Measures','Fin Wealth')]=fin
+                                                d[('Risk Measures','Sharpe Ratio')]=sp
+                                                d[('Risk Measures','Var 95%')]=var
+                                                d[('Risk Measures','Max DD')]=mdd
+                                                
+                                        final_df=final_df.append(d,ignore_index=True)
+        
+        else:
+            for strategy in strategies:
+                for portfolio in portfolios:
+                    path=os.path.join(ptype,strategy,portfolio,period)
                     if os.path.exists(path):
                         for file in os.listdir(path):
-                            
                             if strategy=='Strategy':
                                 if portfolio=='W-L':
                                     d={}
-                                    winner_path=os.path.join(strategy,momentum,'W',period,file)
-                                    loser_path=os.path.join(strategy,momentum,'L',period,file)
+                                    winner_path=os.path.join(ptype,strategy,'W',period,file)
+                                    loser_path=os.path.join(ptype,strategy,'L',period,file)
                                     
-                                    try:
-                                        winner_value=pd.read_csv(winner_path,index_col=('Date'))
-                                        winner_value.index=pd.to_datetime(winner_value.index)
-                                    except:
-                                        break
+                                    winner_value=pd.read_csv(winner_path,index_col=('Date'))
+                                    winner_value.index=pd.to_datetime(winner_value.index)
+                                    
                                     loser_value=pd.read_csv(loser_path,index_col=('Date'))
                                     loser_value.index=pd.to_datetime(loser_value.index)
                                     
@@ -66,11 +398,9 @@ def portfolio_chart(period):
                                     winner_value=100*np.log(winner_value/winner_value.shift(1)).dropna()
                                     loser_value=100*np.log(loser_value/loser_value.shift(1)).dropna()
                                     
-                                    
                                     port_value=winner_value-loser_value
                                     mean_w=winner_value.mean()[0]
                                     mean_l=loser_value.mean()[0]
-                                    
                                     
                                     mean=mean_w-mean_l
                                     std=port_value.std()[0]
@@ -78,8 +408,8 @@ def portfolio_chart(period):
                                     sp=mean/std
                                     var=var_historic(port_value)[0]
                                     mdd=max_dd(port_value)
-
-                                    d[('Strategy','Momentum')]=momentum
+                                    
+                                    d[('Strategy','Momentum')]='Traditional Momentum'
                                     d[('Strategy','Portfolio')]='W-L'
                                     d[('Strategy','Criterion')]=file[:-4]
                                     d[('Strategy','Strategy')]=strategy
@@ -91,7 +421,6 @@ def portfolio_chart(period):
                                     d[('Risk Measures','Sharpe Ratio')]=sp
                                     d[('Risk Measures','Var 95%')]=var
                                     d[('Risk Measures','Max DD')]=mdd
-                                    
                                 else:
                                     d={}
                                     file_path=os.path.join(path,file)
@@ -99,7 +428,6 @@ def portfolio_chart(period):
                                     port_value.index=pd.to_datetime(port_value.index)
                                     
                                     fin=port_value.loc[port_value.index[-1],'Capital']/port_value.loc[port_value.index[0],'Capital']
-                                    
                                     port_value=port_value.resample('M').last()
                                     port_value=100*np.log(port_value/port_value.shift(1)).dropna()
                                     
@@ -109,7 +437,8 @@ def portfolio_chart(period):
                                     sp=mean/std
                                     var=var_historic(port_value)[0]
                                     mdd=max_dd(port_value)
-                                    d[('Strategy','Momentum')]=momentum
+                                    
+                                    d[('Strategy','Momentum')]='Traditional Momentum'
                                     d[('Strategy','Portfolio')]=portfolio
                                     d[('Strategy','Criterion')]=file[:-4]
                                     d[('Strategy','Strategy')]=strategy
@@ -121,13 +450,12 @@ def portfolio_chart(period):
                                     d[('Risk Measures','Sharpe Ratio')]=sp
                                     d[('Risk Measures','Var 95%')]=var
                                     d[('Risk Measures','Max DD')]=mdd
-                                    
                             
                             else:
                                 if portfolio=='L-W':
                                     d={}
-                                    winner_path=os.path.join(strategy,momentum,'W',period,file)
-                                    loser_path=os.path.join(strategy,momentum,'L',period,file)
+                                    winner_path=os.path.join(ptype,strategy,'W',period,file)
+                                    loser_path=os.path.join(ptype,strategy,'L',period,file)
                                     
                                     winner_value=pd.read_csv(winner_path,index_col=('Date'))
                                     winner_value.index=pd.to_datetime(winner_value.index)
@@ -141,16 +469,15 @@ def portfolio_chart(period):
                                     
                                     fin=fin_l-fin_w
                                     
-                                    
                                     winner_value=winner_value.resample('M').last()
                                     loser_value=loser_value.resample('M').last()
                                     winner_value=100*np.log(winner_value/winner_value.shift(1)).dropna()
                                     loser_value=100*np.log(loser_value/loser_value.shift(1)).dropna()
                                     
-                                    
                                     port_value=loser_value-winner_value
                                     mean_w=winner_value.mean()[0]
                                     mean_l=loser_value.mean()[0]
+                                    
                                     mean=mean_l-mean_w
                                     std=port_value.std()[0]
                                     
@@ -158,7 +485,7 @@ def portfolio_chart(period):
                                     var=var_historic(port_value)[0]
                                     mdd=max_dd(port_value)
                                     
-                                    d[('Strategy','Momentum')]=momentum
+                                    d[('Strategy','Momentum')]='Traditional Momentum'
                                     d[('Strategy','Portfolio')]='L-W'
                                     d[('Strategy','Criterion')]=file[:-4]
                                     d[('Strategy','Strategy')]=strategy
@@ -188,7 +515,7 @@ def portfolio_chart(period):
                                     var=var_historic(port_value)[0]
                                     mdd=max_dd(port_value)
                                     
-                                    d[('Strategy','Momentum')]=momentum
+                                    d[('Strategy','Momentum')]='Traditional Momentum'
                                     d[('Strategy','Portfolio')]=portfolio
                                     d[('Strategy','Criterion')]=file[:-4]
                                     d[('Strategy','Strategy')]=strategy
@@ -202,171 +529,6 @@ def portfolio_chart(period):
                                     d[('Risk Measures','Max DD')]=mdd
                                     
                             final_df=final_df.append(d,ignore_index=True)
-            
-            else:
-                for turnover in turnover_rates:
-                    for portfolio in portfolios:
-                        
-                        path=os.path.join(strategy,momentum,turnover,portfolio,period)
-                        if os.path.exists(path):
-                            for file in os.listdir(path):
-                                if strategy=='Strategy':
-                                    if portfolio=='W-L':
-                                        d={}
-                                        winner_path=os.path.join(strategy,momentum,turnover,'W',period,file)
-                                        loser_path=os.path.join(strategy,momentum,turnover,'L',period,file)
-                                        
-                                        try:
-                                            winner_value=pd.read_csv(winner_path,index_col=('Date'))
-                                            winner_value.index=pd.to_datetime(winner_value.index)
-                                        except:
-                                            break
-                                        loser_value=pd.read_csv(loser_path,index_col=('Date'))
-                                        loser_value.index=pd.to_datetime(loser_value.index)
-                                        
-                                        
-                                        fin_w=winner_value.loc[winner_value.index[-1],'Capital']/winner_value.loc[winner_value.index[0],'Capital']
-                                        fin_l=loser_value.loc[loser_value.index[-1],'Capital']/loser_value.loc[loser_value.index[0],'Capital']
-                                        
-                                        fin=fin_w-fin_l
-                                        
-                                        winner_value=winner_value.resample('M').last()
-                                        loser_value=loser_value.resample('M').last()
-                                        winner_value=100*np.log(winner_value/winner_value.shift(1)).dropna()
-                                        loser_value=100*np.log(loser_value/loser_value.shift(1)).dropna()
-                                        
-                                        port_value=winner_value-loser_value
-                                        mean_w=winner_value.mean()[0]
-                                        mean_l=loser_value.mean()[0]
-                                        
-                                        mean=mean_w-mean_l
-                                        std=port_value.std()[0]
-                                        
-                                        sp=mean/std
-                                        var=var_historic(port_value)[0]
-                                        mdd=max_dd(port_value)
-                                        
-                                        d[('Strategy','Momentum')]=momentum
-                                        d[('Strategy','Portfolio')]='W-L'
-                                        d[('Strategy','Criterion')]=file[:-4]
-                                        d[('Strategy','Strategy')]=strategy
-                                        
-                                        d[('Summary','Mean')]=mean
-                                        d[('Summary','STD')]=std
-                                        
-                                        d[('Risk Measures','Fin Wealth')]=fin
-                                        d[('Risk Measures','Sharpe Ratio')]=sp
-                                        d[('Risk Measures','Var 95%')]=var
-                                        d[('Risk Measures','Max DD')]=mdd
-                                    else:
-                                        d={}
-                                        file_path=os.path.join(path,file)
-                                        port_value=pd.read_csv(file_path,index_col=('Date'))
-                                        port_value.index=pd.to_datetime(port_value.index)
-                                        
-                                        fin=port_value.loc[port_value.index[-1],'Capital']/port_value.loc[port_value.index[0],'Capital']
-                                        port_value=port_value.resample('M').last()
-                                        port_value=100*np.log(port_value/port_value.shift(1)).dropna()
-                                        
-                                        mean=port_value.mean()[0]
-                                        std=port_value.std()[0]
-                                        
-                                        sp=mean/std
-                                        var=var_historic(port_value)[0]
-                                        mdd=max_dd(port_value)
-                                        
-                                        d[('Strategy','Momentum')]=momentum
-                                        d[('Strategy','Portfolio')]=portfolio
-                                        d[('Strategy','Criterion')]=file[:-4]
-                                        d[('Strategy','Strategy')]=strategy
-                                        
-                                        d[('Summary','Mean')]=mean
-                                        d[('Summary','STD')]=std
-                                        
-                                        d[('Risk Measures','Fin Wealth')]=fin
-                                        d[('Risk Measures','Sharpe Ratio')]=sp
-                                        d[('Risk Measures','Var 95%')]=var
-                                        d[('Risk Measures','Max DD')]=mdd
-                                
-                                else:
-                                    if portfolio=='L-W':
-                                        d={}
-                                        winner_path=os.path.join(strategy,momentum,turnover,'W',period,file)
-                                        loser_path=os.path.join(strategy,momentum,turnover,'L',period,file)
-                                        
-                                        winner_value=pd.read_csv(winner_path,index_col=('Date'))
-                                        winner_value.index=pd.to_datetime(winner_value.index)
-                                        
-                                        loser_value=pd.read_csv(loser_path,index_col=('Date'))
-                                        loser_value.index=pd.to_datetime(loser_value.index)
-                                        
-                                        
-                                        fin_w=winner_value.loc[winner_value.index[-1],'Capital']/winner_value.loc[winner_value.index[0],'Capital']
-                                        fin_l=loser_value.loc[loser_value.index[-1],'Capital']/loser_value.loc[loser_value.index[0],'Capital']
-                                        
-                                        fin=fin_l-fin_w
-                                        
-                                        winner_value=winner_value.resample('M').last()
-                                        loser_value=loser_value.resample('M').last()
-                                        winner_value=100*np.log(winner_value/winner_value.shift(1)).dropna()
-                                        loser_value=100*np.log(loser_value/loser_value.shift(1)).dropna()
-                                        
-                                        port_value=loser_value-winner_value
-                                        mean_w=winner_value.mean()[0]
-                                        mean_l=loser_value.mean()[0]
-                                        
-                                        mean=mean_l-mean_w
-                                        std=port_value.std()[0]
-                                        
-                                        sp=mean/std
-                                        var=var_historic(port_value)[0]
-                                        mdd=max_dd(port_value)
-                                        
-                                        d[('Strategy','Momentum')]=momentum
-                                        d[('Strategy','Portfolio')]='L-W'
-                                        d[('Strategy','Criterion')]=file[:-4]
-                                        d[('Strategy','Strategy')]=strategy
-                                        
-                                        d[('Summary','Mean')]=mean
-                                        d[('Summary','STD')]=std
-                                        
-                                        d[('Risk Measures','Fin Wealth')]=fin
-                                        d[('Risk Measures','Sharpe Ratio')]=sp
-                                        d[('Risk Measures','Var 95%')]=var
-                                        d[('Risk Measures','Max DD')]=mdd
-                                        
-                                    else:
-                                        d={}
-                                        file_path=os.path.join(path,file)
-                                        port_value=pd.read_csv(file_path,index_col=('Date'))
-                                        port_value.index=pd.to_datetime(port_value.index)
-                                        
-                                        fin=port_value.loc[port_value.index[-1],'Capital']/port_value.loc[port_value.index[0],'Capital']
-                                        port_value=port_value.resample('M').last()
-                                        port_value=100*np.log(port_value/port_value.shift(1)).dropna()
-                                        
-                                        mean=port_value.mean()[0]
-                                        std=port_value.std()[0]
-                                        
-                                        sp=mean/std
-                                        var=var_historic(port_value)[0]
-                                        mdd=max_dd(port_value)
-                                        
-                                        d[('Strategy','Momentum')]=momentum
-                                        d[('Strategy','Portfolio')]=portfolio
-                                        d[('Strategy','Criterion')]=file[:-4]
-                                        d[('Strategy','Strategy')]=strategy
-                                        
-                                        d[('Summary','Mean')]=mean
-                                        d[('Summary','STD')]=std
-                                        
-                                        d[('Risk Measures','Fin Wealth')]=fin
-                                        d[('Risk Measures','Sharpe Ratio')]=sp
-                                        d[('Risk Measures','Var 95%')]=var
-                                        d[('Risk Measures','Max DD')]=mdd
-                                        
-                                final_df=final_df.append(d,ignore_index=True)
-    
     return final_df
 
 
@@ -407,4 +569,5 @@ def get_best_df(df):
 if __name__=='__main__':
     final_df=portfolio_chart('Year')
     best_df=get_best_df(final_df)
-    best_df=best_df.groupby([('Strategy','Momentum'),('Strategy','Criterion'),('Strategy','Strategy'),('Strategy','Portfolio')]).last()
+    #best_df=best_df.groupby([('Strategy','Momentum'),('Strategy','Criterion'),('Strategy','Strategy'),('Strategy','Portfolio')]).last()
+    best_df.to_csv('Best Year.csv',index=False)
