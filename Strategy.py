@@ -91,7 +91,7 @@ if __name__=='__main__':
     ticker=yf.Ticker(ticker)
     
     investment=100000
-    period='Day'
+    period='Month'
     mass='Turnover Rate'
     
     if period=='Day':    
@@ -119,6 +119,7 @@ if __name__=='__main__':
                 portfolio_value=(portfolio_value-k*investment)/(k*investment)
                 portfolio_value.plot()
                 nifty.plot()
+                plt.title(str(j)+'-'+str(k))
                 plt.show()
             else:
                 matrix=pd.read_csv('Momentum/Momentum Matrix/'+period+'/'+mass+'/matrix.csv')
@@ -140,6 +141,7 @@ if __name__=='__main__':
                 portfolio_value=(portfolio_value-k*investment)/(k*investment)
                 portfolio_value.plot()
                 nifty.plot()
+                plt.title(str(j)+'-'+str(k))
                 plt.show()
 
     '''MOMENTUM 2'''
@@ -159,6 +161,7 @@ if __name__=='__main__':
                 portfolio_value=(portfolio_value-k*investment)/(k*investment)
                 portfolio_value.plot()
                 nifty.plot()
+                plt.title(str(j)+'-'+str(k))
                 plt.show()
             else:
                 matrix=pd.read_csv('Momentum/Momentum Matrix/'+period+'/'+mass+'/matrix.csv')
@@ -184,6 +187,7 @@ if __name__=='__main__':
                 portfolio_value=(portfolio_value-k*investment)/(k*investment)
                 portfolio_value.plot()
                 nifty.plot()
+                plt.title(str(j)+'-'+str(k))
                 plt.show()
                 
     '''MOMENTUM 3'''
@@ -203,6 +207,7 @@ if __name__=='__main__':
                 portfolio_value=(portfolio_value-k*investment)/(k*investment)
                 portfolio_value.plot()
                 nifty.plot()
+                plt.title(str(j)+'-'+str(k))
                 plt.show()
             else:
                 matrix=pd.read_csv('Momentum/Momentum Matrix 3/'+period+'/matrix.csv')
@@ -223,4 +228,5 @@ if __name__=='__main__':
                 portfolio_value=(portfolio_value-k*investment)/(k*investment)
                 portfolio_value.plot()
                 nifty.plot()
+                plt.title(str(j)+'-'+str(k))
                 plt.show()
