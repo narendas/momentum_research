@@ -87,6 +87,8 @@ def strategy(ins,outs,investment,k):
     return portfolio_value
 
 if __name__=='__main__':
+    ticker='^NSEI'
+    ticker=yf.Ticker(ticker)
     
     investment=100000
     period='Day'
@@ -111,9 +113,13 @@ if __name__=='__main__':
                 portfolio_value.index=portfolio_value['Date']
                 portfolio_value.drop('Date',axis=1,inplace=True)
                 
+                nifty=ticker.history(start=portfolio_value.index[0],end=portfolio_value.index[-1])
+                nifty=(nifty['Close']-nifty.loc[nifty.index[0],'Close'])/nifty.loc[nifty.index[0],'Close']
                 
                 portfolio_value=(portfolio_value-k*investment)/(k*investment)
                 portfolio_value.plot()
+                nifty.plot()
+                plt.title(str(j)+'-'+str(k))
                 plt.show()
             else:
                 matrix=pd.read_csv('Momentum/Momentum Matrix/'+period+'/'+mass+'/matrix.csv')
@@ -129,5 +135,54 @@ if __name__=='__main__':
                     break
                 portfolio_value.to_csv('Traditional Momentum/Strategy/W-L/'+period+'/'+str(j)+'-'+str(k)+'.csv')
                 
+                nifty=ticker.history(start=portfolio_value.index[0],end=portfolio_value.index[-1])
+                nifty=(nifty['Close']-nifty.loc[nifty.index[0],'Close'])/nifty.loc[nifty.index[0],'Close']
+                
                 portfolio_value=(portfolio_value-k*investment)/(k*investment)
                 portfolio_value.plot()
+                nifty.plot()
+                plt.title(str(j)+'-'+str(k))
+                plt.show()
+    
+    '''Traditional Contrarian'''
+    for j in range(1,max_iter):
+        for k in range(1,max_iter):
+            print(j,k)
+            if os.path.exists('Traditional Momentum/Contrarian Strategy/L-W/'+period+'/'+str(j)+'-'+str(k)+'.csv'):
+                print('Already Exists')
+                portfolio_value=pd.read_csv('Traditional Momentum/Contrarian Strategy/L-W/'+period+'/'+str(j)+'-'+str(k)+'.csv')
+                portfolio_value['Date']=pd.to_datetime(portfolio_value['Date'])
+                portfolio_value.index=portfolio_value['Date']
+                portfolio_value.drop('Date',axis=1,inplace=True)
+                
+                
+                nifty=ticker.history(start=portfolio_value.index[0],end=portfolio_value.index[-1])
+                nifty=(nifty['Close']-nifty.loc[nifty.index[0],'Close'])/nifty.loc[nifty.index[0],'Close']
+                
+                portfolio_value=(portfolio_value-k*investment)/(k*investment)
+                portfolio_value.plot()
+                nifty.plot()
+                plt.title(str(j)+'-'+str(k))
+                plt.show()
+            else:
+                matrix=pd.read_csv('Momentum/Momentum Matrix/'+period+'/'+mass+'/matrix.csv')
+                matrix['Date']=pd.to_datetime(matrix['Date'])
+                matrix.index=matrix['Date']
+                matrix.drop('Date',axis=1,inplace=True)
+                
+                ins,outs=momentum_1(matrix,j,k,equal=True,contrarian=True)
+                
+                try:
+                    portfolio_value=strategy(ins,outs,investment,k)
+                except:
+                    break
+                portfolio_value.to_csv('Traditional Momentum/Contrarian Strategy/L-W/'+period+'/'+str(j)+'-'+str(k)+'.csv')
+                
+                nifty=ticker.history(start=portfolio_value.index[0],end=portfolio_value.index[-1])
+                nifty=(nifty['Close']-nifty.loc[nifty.index[0],'Close'])/nifty.loc[nifty.index[0],'Close']
+                
+                portfolio_value=(portfolio_value-k*investment)/(k*investment)
+                portfolio_value.plot()
+                nifty.plot()
+                plt.title(str(j)+'-'+str(k))
+                plt.show()
