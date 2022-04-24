@@ -63,7 +63,7 @@ def get_stats(w,l,best_selection,momentum,portfolio,mass):
     d_w['Mean']=w_mean
     d_w['Std']=w_std
     d_w['Fin Wealth']=w_fin
-    d_w['Sharpe Ratio']=w_sp
+    d_w['Sharpe Ratio']=np.abs(w_sp)
     d_w['Var 95%']=w_var
     d_w['Max DD']=w_mdd
     
@@ -76,7 +76,7 @@ def get_stats(w,l,best_selection,momentum,portfolio,mass):
     d_l['Mean']=l_mean
     d_l['Std']=l_std
     d_l['Fin Wealth']=l_fin
-    d_l['Sharpe Ratio']=l_sp
+    d_l['Sharpe Ratio']=np.abs(l_sp)
     d_l['Var 95%']=l_var
     d_l['Max DD']=l_mdd
     
@@ -105,7 +105,7 @@ def get_stats(w,l,best_selection,momentum,portfolio,mass):
         d['Mean']=mean
         d['Std']=std
         d['Fin Wealth']=fin
-        d['Sharpe Ratio']=sp
+        d['Sharpe Ratio']=np.abs(sp)
         d['Var 95%']=var
         d['Max DD']=mdd
     
@@ -135,7 +135,7 @@ def get_stats(w,l,best_selection,momentum,portfolio,mass):
         d['Std']=std
     
         d['Fin Wealth']=fin
-        d['Sharpe Ratio']=sp
+        d['Sharpe Ratio']=np.abs(sp)
         d['Var 95%']=var
         d['Max DD']=mdd
     return d_w,d_l,d
@@ -159,13 +159,20 @@ m1_tr_l.index=pd.to_datetime(m1_tr_l.index)
 
 if m1_tr_best[1]=='W-L':
     d_w,d_l,d=get_stats(m1_tr_w, m1_tr_l,m1_tr_best,'Momentum 1','W-L','Turnover Rate')
-    
+    m1_tr_r=m1_tr.resample('M').last()
+    m1_tr_r=100*np.log(m1_tr_r/m1_tr_r.shift(1)).dropna()
+    d['Std']=m1_tr_r.std()[0]
+    d['Sharpe Ratio']=d['Mean']/d['Std']
     final_df=pd.concat([final_df,pd.DataFrame(d_w.values(),index=d_w.keys()).T],ignore_index=True)
     final_df=pd.concat([final_df,pd.DataFrame(d_l.values(),index=d_l.keys()).T],ignore_index=True)
     final_df=pd.concat([final_df,pd.DataFrame(d.values(),index=d.keys()).T],ignore_index=True)
 
 else:
     d_w,d_l,d=get_stats(m1_tr_w, m1_tr_l,m1_tr_best,'Momentum 1','L-W','Turnover Rate')
+    m1_tr_r=m1_tr.resample('M').last()
+    m1_tr_r=100*np.log(m1_tr_r/m1_tr_r.shift(1)).dropna()
+    d['Std']=m1_tr_r.std()[0]
+    d['Sharpe Ratio']=d['Mean']/d['Std']
     
     final_df=pd.concat([final_df,pd.DataFrame(d_w.values(),index=d_w.keys()).T],ignore_index=True)
     final_df=pd.concat([final_df,pd.DataFrame(d_l.values(),index=d_l.keys()).T],ignore_index=True)
@@ -184,6 +191,10 @@ m1_itr_l.index=pd.to_datetime(m1_itr_l.index)
 
 if m1_itr_best[1]=='W-L':
     d_w,d_l,d=get_stats(m1_itr_w, m1_itr_l,m1_itr_best,'Momentum 1','W-L','Inverse Turnover Rate')
+    m1_itr_r=m1_itr.resample('M').last()
+    m1_itr_r=100*np.log(m1_itr_r/m1_itr_r.shift(1)).dropna()
+    d['Std']=m1_itr_r.std()[0]
+    d['Sharpe Ratio']=d['Mean']/d['Std']
     
     final_df=pd.concat([final_df,pd.DataFrame(d_w.values(),index=d_w.keys()).T],ignore_index=True)
     final_df=pd.concat([final_df,pd.DataFrame(d_l.values(),index=d_l.keys()).T],ignore_index=True)
@@ -191,6 +202,10 @@ if m1_itr_best[1]=='W-L':
 
 else:
     d_w,d_l,d=get_stats(m1_itr_w, m1_itr_l,m1_itr_best,'Momentum 1','L-W','Inverse Turnover Rate')
+    m1_itr_r=m1_itr.resample('M').last()
+    m1_itr_r=100*np.log(m1_itr_r/m1_itr_r.shift(1)).dropna()
+    d['Std']=m1_itr_r.std()[0]
+    d['Sharpe Ratio']=d['Mean']/d['Std']
     
     final_df=pd.concat([final_df,pd.DataFrame(d_w.values(),index=d_w.keys()).T],ignore_index=True)
     final_df=pd.concat([final_df,pd.DataFrame(d_l.values(),index=d_l.keys()).T],ignore_index=True)
@@ -212,13 +227,21 @@ m2_tr_l.index=pd.to_datetime(m2_tr_l.index)
 
 if m2_tr_best[1]=='W-L':
     d_w,d_l,d=get_stats(m2_tr_w, m2_tr_l,m2_tr_best,'Momentum 2','W-L','Turnover Rate')
-    
+    m2_tr_r=m2_tr.resample('M').last()
+    m2_tr_r=100*np.log(m2_tr_r/m2_tr_r.shift(1)).dropna()
+    d['Std']=m2_tr_r.std()[0]
+    d['Sharpe Ratio']=d['Mean']/d['Std']
+
     final_df=pd.concat([final_df,pd.DataFrame(d_w.values(),index=d_w.keys()).T],ignore_index=True)
     final_df=pd.concat([final_df,pd.DataFrame(d_l.values(),index=d_l.keys()).T],ignore_index=True)
     final_df=pd.concat([final_df,pd.DataFrame(d.values(),index=d.keys()).T],ignore_index=True)
 
 else:
     d_w,d_l,d=get_stats(m2_tr_w, m2_tr_l,m2_tr_best,'Momentum 2','L-W','Turnover Rate')
+    m2_tr_r=m2_tr.resample('M').last()
+    m2_tr_r=100*np.log(m2_tr_r/m2_tr_r.shift(1)).dropna()
+    d['Std']=m2_tr_r.std()[0]
+    d['Sharpe Ratio']=d['Mean']/d['Std']
     
     final_df=pd.concat([final_df,pd.DataFrame(d_w.values(),index=d_w.keys()).T],ignore_index=True)
     final_df=pd.concat([final_df,pd.DataFrame(d_l.values(),index=d_l.keys()).T],ignore_index=True)
@@ -237,6 +260,10 @@ m2_itr_l.index=pd.to_datetime(m2_itr_l.index)
 
 if m2_itr_best[1]=='W-L':
     d_w,d_l,d=get_stats(m2_itr_w, m2_itr_l,m2_itr_best,'Momentum 2','W-L','Inverse Turnover Rate')
+    m2_itr_r=m2_itr.resample('M').last()
+    m2_itr_r=100*np.log(m2_itr_r/m2_itr_r.shift(1)).dropna()
+    d['Std']=m2_itr_r.std()[0]
+    d['Sharpe Ratio']=d['Mean']/d['Std']
     
     final_df=pd.concat([final_df,pd.DataFrame(d_w.values(),index=d_w.keys()).T],ignore_index=True)
     final_df=pd.concat([final_df,pd.DataFrame(d_l.values(),index=d_l.keys()).T],ignore_index=True)
@@ -244,6 +271,10 @@ if m2_itr_best[1]=='W-L':
 
 else:
     d_w,d_l,d=get_stats(m2_itr_w, m2_itr_l,m2_itr_best,'Momentum 2','L-W','Inverse Turnover Rate')
+    m2_itr_r=m2_itr.resample('M').last()
+    m2_itr_r=100*np.log(m2_itr_r/m2_itr_r.shift(1)).dropna()
+    d['Std']=m2_itr_r.std()[0]
+    d['Sharpe Ratio']=d['Mean']/d['Std']
     
     final_df=pd.concat([final_df,pd.DataFrame(d_w.values(),index=d_w.keys()).T],ignore_index=True)
     final_df=pd.concat([final_df,pd.DataFrame(d_l.values(),index=d_l.keys()).T],ignore_index=True)
@@ -263,6 +294,10 @@ m3_l.index=pd.to_datetime(m3_l.index)
 
 if m3_best[1]=='W-L':
     d_w,d_l,d=get_stats(m3_w, m3_l,m3_best,'Momentum 3','W-L','Turnover Rate')
+    m3_r=m3.resample('M').last()
+    m3_r=100*np.log(m3_r/m3_r.shift(1)).dropna()
+    d['Std']=m3_r.std()[0]
+    d['Sharpe Ratio']=d['Mean']/d['Std']
     
     final_df=pd.concat([final_df,pd.DataFrame(d_w.values(),index=d_w.keys()).T],ignore_index=True)
     final_df=pd.concat([final_df,pd.DataFrame(d_l.values(),index=d_l.keys()).T],ignore_index=True)
@@ -270,6 +305,10 @@ if m3_best[1]=='W-L':
 
 else:
     d_w,d_l,d=get_stats(m3_w, m3_l,m3_best,'Momentum 3','L-W','Turnover Rate')
+    m3_r=m3.resample('M').last()
+    m3_r=100*np.log(m3_r/m3_r.shift(1)).dropna()
+    d['Std']=m3_r.std()[0]
+    d['Sharpe Ratio']=d['Mean']/d['Std']
     
     final_df=pd.concat([final_df,pd.DataFrame(d_w.values(),index=d_w.keys()).T],ignore_index=True)
     final_df=pd.concat([final_df,pd.DataFrame(d_l.values(),index=d_l.keys()).T],ignore_index=True)
