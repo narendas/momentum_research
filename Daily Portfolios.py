@@ -4,7 +4,6 @@ import pandas as pd
 import numpy as np
 import yfinance as yf
 from datetime import date
-
 period='Day'
 m1_tr_best=['Contrarian Strategy','L-W','1-2']
 m1_itr_best=['Strategy','W-L','1-2']
@@ -310,6 +309,7 @@ else:
     
     d=get_risks(m3,m3_best,'Momentum 3','L-W','Inverse Volatility')
     risks_df=pd.concat([risks_df,pd.DataFrame(d.values(),index=d.keys()).T],ignore_index=True)
+
 ticker='^NSEI'
 ticker=yf.Ticker(ticker)
 nifty=ticker.history(start=date(2014,1,1),end=date(2022,1,1,))
@@ -323,3 +323,8 @@ plot_df['Momentum 2 ITR']=(m2_itr-m2_itr.loc[m2_itr.index[0],'Capital'])/m2_itr.
 plot_df['Momentum 3']=(m3-m3.loc[m3.index[0],'Capital'])/m3.loc[m3.index[0],'Capital']
 plot_df['Nifty']=nifty
 plot_df.plot()
+
+
+stats_df.to_csv('Results/Day/stats.csv',index=False)
+risks_df.to_csv('Results/Day/risks.csv',index=False)
+stats_df.to_csv()
