@@ -1,0 +1,16 @@
+Momentum,Mass,Strategy,Criterion,Portfolio,Mean,Std
+Momentum 1,Turnover Rate,Strategy,7-1,W,0.17412626427430053,8.661213911407257
+Momentum 1,Turnover Rate,Strategy,7-1,L,-1.9915232492731771,9.896505447543994
+Momentum 1,Turnover Rate,Strategy,7-1,W-L,2.1656495135474776,4.473935074136244
+Momentum 1,Inverse Turnover Rate,Strategy,7-1,W,0.8046233454070111,6.304909599250423
+Momentum 1,Inverse Turnover Rate,Strategy,7-1,L,-1.6219773671431803,6.974193514852202
+Momentum 1,Inverse Turnover Rate,Strategy,7-1,W-L,2.4266007125501914,2.8957033024474255
+Momentum 2,Turnover Rate,Strategy,7-1,W,-0.7284617263414008,8.514958389625743
+Momentum 2,Turnover Rate,Strategy,7-1,L,-2.294405282185706,9.87765881919597
+Momentum 2,Turnover Rate,Strategy,7-1,W-L,1.5659435558443053,4.772130269100411
+Momentum 2,Inverse Turnover Rate,Strategy,8-8,W,1.3236563537434456,8.422597752253711
+Momentum 2,Inverse Turnover Rate,Strategy,8-8,L,-1.2210783509344796,12.439104799375698
+Momentum 2,Inverse Turnover Rate,Strategy,8-8,W-L,2.544734704677925,4.4272982307616715
+Momentum 3,Inverse Volatility,Strategy,8-8,W,1.7272717197151621,6.182747341175125
+Momentum 3,Inverse Volatility,Strategy,8-8,L,0.39088698432170127,8.261543292140393
+Momentum 3,Inverse Volatility,Strategy,8-8,W-L,1.3363847353934608,2.8383918796383107
