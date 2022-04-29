@@ -141,30 +141,17 @@ m1_tr_w.index=pd.to_datetime(m1_tr_w.index)
 m1_tr_l=pd.read_csv(os.path.join(m1_tr_best[0],'Momentum 1','Turnover Rate','L',period,m1_tr_best[2]+'.csv'),index_col='Date')
 m1_tr_l.index=pd.to_datetime(m1_tr_l.index)
 
-if m1_tr_best[1]=='W-L':
-    d_w,d_l,d=get_stats(m1_tr_w, m1_tr_l,m1_tr_best,'Momentum 1','W-L','Turnover Rate')
-    m1_tr_r=m1_tr.resample('M').last()
-    m1_tr_r=100*np.log(m1_tr_r/m1_tr_r.shift(1)).dropna()
-    d['Std']=m1_tr_r.std()[0]
+d_w,d_l,d=get_stats(m1_tr_w, m1_tr_l,m1_tr_best,'Momentum 1',m1_tr_best[1],'Turnover Rate')
+m1_tr_r=m1_tr.resample('M').last()
+m1_tr_r=100*np.log(m1_tr_r/m1_tr_r.shift(1)).dropna()
+d['Std']=m1_tr_r.std()[0]
 
-    stats_df=pd.concat([stats_df,pd.DataFrame(d_w.values(),index=d_w.keys()).T],ignore_index=True)
-    stats_df=pd.concat([stats_df,pd.DataFrame(d_l.values(),index=d_l.keys()).T],ignore_index=True)
-    stats_df=pd.concat([stats_df,pd.DataFrame(d.values(),index=d.keys()).T],ignore_index=True)
-    
-    d=get_risks(m1_tr,m1_tr_best,'Momentum 1','W-L','Turnover Rate')
-    risks_df=pd.concat([risks_df,pd.DataFrame(d.values(),index=d.keys()).T],ignore_index=True)
-else:
-    d_w,d_l,d=get_stats(m1_tr_w, m1_tr_l,m1_tr_best,'Momentum 1','L-W','Turnover Rate')
-    m1_tr_r=m1_tr.resample('M').last()
-    m1_tr_r=100*np.log(m1_tr_r/m1_tr_r.shift(1)).dropna()
-    d['Std']=m1_tr_r.std()[0]
-    
-    stats_df=pd.concat([stats_df,pd.DataFrame(d_w.values(),index=d_w.keys()).T],ignore_index=True)
-    stats_df=pd.concat([stats_df,pd.DataFrame(d_l.values(),index=d_l.keys()).T],ignore_index=True)
-    stats_df=pd.concat([stats_df,pd.DataFrame(d.values(),index=d.keys()).T],ignore_index=True)
-    
-    d=get_risks(m1_tr,m1_tr_best,'Momentum 1','L-W','Turnover Rate')
-    risks_df=pd.concat([risks_df,pd.DataFrame(d.values(),index=d.keys()).T],ignore_index=True)
+stats_df=pd.concat([stats_df,pd.DataFrame(d_w.values(),index=d_w.keys()).T],ignore_index=True)
+stats_df=pd.concat([stats_df,pd.DataFrame(d_l.values(),index=d_l.keys()).T],ignore_index=True)
+stats_df=pd.concat([stats_df,pd.DataFrame(d.values(),index=d.keys()).T],ignore_index=True)
+
+d=get_risks(m1_tr,m1_tr_best,'Momentum 1',m1_tr_best[1],'Turnover Rate')
+risks_df=pd.concat([risks_df,pd.DataFrame(d.values(),index=d.keys()).T],ignore_index=True)
 
 '''INVERSE TURNOVER RATE'''
 m1_itr=pd.read_csv(os.path.join(m1_itr_best[0],'Momentum 1','Inverse Turnover Rate',m1_itr_best[1],period,m1_itr_best[2]+'.csv'),index_col='Date')
@@ -176,30 +163,17 @@ m1_itr_w.index=pd.to_datetime(m1_itr_w.index)
 m1_itr_l=pd.read_csv(os.path.join(m1_itr_best[0],'Momentum 1','Inverse Turnover Rate','L',period,m1_itr_best[2]+'.csv'),index_col='Date')
 m1_itr_l.index=pd.to_datetime(m1_itr_l.index)
 
-if m1_itr_best[1]=='W-L':
-    d_w,d_l,d=get_stats(m1_itr_w, m1_itr_l,m1_itr_best,'Momentum 1','W-L','Inverse Turnover Rate')
-    m1_itr_r=m1_itr.resample('M').last()
-    m1_itr_r=100*np.log(m1_itr_r/m1_itr_r.shift(1)).dropna()
-    d['Std']=m1_itr_r.std()[0]
-    
-    stats_df=pd.concat([stats_df,pd.DataFrame(d_w.values(),index=d_w.keys()).T],ignore_index=True)
-    stats_df=pd.concat([stats_df,pd.DataFrame(d_l.values(),index=d_l.keys()).T],ignore_index=True)
-    stats_df=pd.concat([stats_df,pd.DataFrame(d.values(),index=d.keys()).T],ignore_index=True)
-    
-    d=get_risks(m1_itr,m1_itr_best,'Momentum 1','W-L','Inverse Turnover Rate')
-    risks_df=pd.concat([risks_df,pd.DataFrame(d.values(),index=d.keys()).T],ignore_index=True)
-else:
-    d_w,d_l,d=get_stats(m1_itr_w, m1_itr_l,m1_itr_best,'Momentum 1','L-W','Inverse Turnover Rate')
-    m1_itr_r=m1_itr.resample('M').last()
-    m1_itr_r=100*np.log(m1_itr_r/m1_itr_r.shift(1)).dropna()
-    d['Std']=m1_itr_r.std()[0]
-    
-    stats_df=pd.concat([stats_df,pd.DataFrame(d_w.values(),index=d_w.keys()).T],ignore_index=True)
-    stats_df=pd.concat([stats_df,pd.DataFrame(d_l.values(),index=d_l.keys()).T],ignore_index=True)
-    stats_df=pd.concat([stats_df,pd.DataFrame(d.values(),index=d.keys()).T],ignore_index=True)
-    
-    d=get_risks(m1_itr,m1_itr_best,'Momentum 1','L-W','Inverse Turnover Rate')
-    risks_df=pd.concat([risks_df,pd.DataFrame(d.values(),index=d.keys()).T],ignore_index=True)
+d_w,d_l,d=get_stats(m1_itr_w, m1_itr_l,m1_itr_best,'Momentum 1',m1_itr_best[1],'Inverse Turnover Rate')
+m1_itr_r=m1_itr.resample('M').last()
+m1_itr_r=100*np.log(m1_itr_r/m1_itr_r.shift(1)).dropna()
+d['Std']=m1_itr_r.std()[0]
+
+stats_df=pd.concat([stats_df,pd.DataFrame(d_w.values(),index=d_w.keys()).T],ignore_index=True)
+stats_df=pd.concat([stats_df,pd.DataFrame(d_l.values(),index=d_l.keys()).T],ignore_index=True)
+stats_df=pd.concat([stats_df,pd.DataFrame(d.values(),index=d.keys()).T],ignore_index=True)
+
+d=get_risks(m1_itr,m1_itr_best,'Momentum 1',m1_itr_best[1],'Inverse Turnover Rate')
+risks_df=pd.concat([risks_df,pd.DataFrame(d.values(),index=d.keys()).T],ignore_index=True)
 
 # =============================================================================
 # MOMENTUM 2
@@ -214,30 +188,17 @@ m2_tr_w.index=pd.to_datetime(m2_tr_w.index)
 m2_tr_l=pd.read_csv(os.path.join(m2_tr_best[0],'Momentum 2','Turnover Rate','L',period,m2_tr_best[2]+'.csv'),index_col='Date')
 m2_tr_l.index=pd.to_datetime(m2_tr_l.index)
 
-if m2_tr_best[1]=='W-L':
-    d_w,d_l,d=get_stats(m2_tr_w, m2_tr_l,m2_tr_best,'Momentum 2','W-L','Turnover Rate')
-    m2_tr_r=m2_tr.resample('M').last()
-    m2_tr_r=100*np.log(m2_tr_r/m2_tr_r.shift(1)).dropna()
-    d['Std']=m2_tr_r.std()[0]
+d_w,d_l,d=get_stats(m2_tr_w, m2_tr_l,m2_tr_best,'Momentum 2',m2_tr_best[1],'Turnover Rate')
+m2_tr_r=m2_tr.resample('M').last()
+m2_tr_r=100*np.log(m2_tr_r/m2_tr_r.shift(1)).dropna()
+d['Std']=m2_tr_r.std()[0]
 
-    stats_df=pd.concat([stats_df,pd.DataFrame(d_w.values(),index=d_w.keys()).T],ignore_index=True)
-    stats_df=pd.concat([stats_df,pd.DataFrame(d_l.values(),index=d_l.keys()).T],ignore_index=True)
-    stats_df=pd.concat([stats_df,pd.DataFrame(d.values(),index=d.keys()).T],ignore_index=True)
-    
-    d=get_risks(m2_tr,m2_tr_best,'Momentum 2','W-L','Turnover Rate')
-    risks_df=pd.concat([risks_df,pd.DataFrame(d.values(),index=d.keys()).T],ignore_index=True)
-else:
-    d_w,d_l,d=get_stats(m2_tr_w, m2_tr_l,m2_tr_best,'Momentum 2','L-W','Turnover Rate')
-    m2_tr_r=m2_tr.resample('M').last()
-    m2_tr_r=100*np.log(m2_tr_r/m2_tr_r.shift(1)).dropna()
-    d['Std']=m2_tr_r.std()[0]
-    
-    stats_df=pd.concat([stats_df,pd.DataFrame(d_w.values(),index=d_w.keys()).T],ignore_index=True)
-    stats_df=pd.concat([stats_df,pd.DataFrame(d_l.values(),index=d_l.keys()).T],ignore_index=True)
-    stats_df=pd.concat([stats_df,pd.DataFrame(d.values(),index=d.keys()).T],ignore_index=True)
-    
-    d=get_risks(m2_tr,m2_tr_best,'Momentum 2','L-W','Turnover Rate')
-    risks_df=pd.concat([risks_df,pd.DataFrame(d.values(),index=d.keys()).T],ignore_index=True)
+stats_df=pd.concat([stats_df,pd.DataFrame(d_w.values(),index=d_w.keys()).T],ignore_index=True)
+stats_df=pd.concat([stats_df,pd.DataFrame(d_l.values(),index=d_l.keys()).T],ignore_index=True)
+stats_df=pd.concat([stats_df,pd.DataFrame(d.values(),index=d.keys()).T],ignore_index=True)
+
+d=get_risks(m2_tr,m2_tr_best,'Momentum 2',m2_tr_best[1],'Turnover Rate')
+risks_df=pd.concat([risks_df,pd.DataFrame(d.values(),index=d.keys()).T],ignore_index=True)
 
 '''INVERSE TURNOVER RATE'''
 m2_itr=pd.read_csv(os.path.join(m2_itr_best[0],'Momentum 2','Inverse Turnover Rate',m2_itr_best[1],period,m2_itr_best[2]+'.csv'),index_col='Date')
@@ -249,30 +210,18 @@ m2_itr_w.index=pd.to_datetime(m2_itr_w.index)
 m2_itr_l=pd.read_csv(os.path.join(m2_itr_best[0],'Momentum 2','Inverse Turnover Rate','L',period,m2_itr_best[2]+'.csv'),index_col='Date')
 m2_itr_l.index=pd.to_datetime(m2_itr_l.index)
 
-if m2_itr_best[1]=='W-L':
-    d_w,d_l,d=get_stats(m2_itr_w, m2_itr_l,m2_itr_best,'Momentum 2','W-L','Inverse Turnover Rate')
-    m2_itr_r=m2_itr.resample('M').last()
-    m2_itr_r=100*np.log(m2_itr_r/m2_itr_r.shift(1)).dropna()
-    d['Std']=m2_itr_r.std()[0]
-    
-    stats_df=pd.concat([stats_df,pd.DataFrame(d_w.values(),index=d_w.keys()).T],ignore_index=True)
-    stats_df=pd.concat([stats_df,pd.DataFrame(d_l.values(),index=d_l.keys()).T],ignore_index=True)
-    stats_df=pd.concat([stats_df,pd.DataFrame(d.values(),index=d.keys()).T],ignore_index=True)
-    
-    d=get_risks(m2_itr,m2_itr_best,'Momentum 2','W-L','Inverse Turnover Rate')
-    risks_df=pd.concat([risks_df,pd.DataFrame(d.values(),index=d.keys()).T],ignore_index=True)
-else:
-    d_w,d_l,d=get_stats(m2_itr_w, m2_itr_l,m2_itr_best,'Momentum 2','L-W','Inverse Turnover Rate')
-    m2_itr_r=m2_itr.resample('M').last()
-    m2_itr_r=100*np.log(m2_itr_r/m2_itr_r.shift(1)).dropna()
-    d['Std']=m2_itr_r.std()[0]
-    
-    stats_df=pd.concat([stats_df,pd.DataFrame(d_w.values(),index=d_w.keys()).T],ignore_index=True)
-    stats_df=pd.concat([stats_df,pd.DataFrame(d_l.values(),index=d_l.keys()).T],ignore_index=True)
-    stats_df=pd.concat([stats_df,pd.DataFrame(d.values(),index=d.keys()).T],ignore_index=True)
-    
-    d=get_risks(m2_itr,m2_itr_best,'Momentum 2','L-W','Inverse Turnover Rate')
-    risks_df=pd.concat([risks_df,pd.DataFrame(d.values(),index=d.keys()).T],ignore_index=True)
+d_w,d_l,d=get_stats(m2_itr_w, m2_itr_l,m2_itr_best,'Momentum 2',m2_itr_best[1],'Inverse Turnover Rate')
+m2_itr_r=m2_itr.resample('M').last()
+m2_itr_r=100*np.log(m2_itr_r/m2_itr_r.shift(1)).dropna()
+d['Std']=m2_itr_r.std()[0]
+
+stats_df=pd.concat([stats_df,pd.DataFrame(d_w.values(),index=d_w.keys()).T],ignore_index=True)
+stats_df=pd.concat([stats_df,pd.DataFrame(d_l.values(),index=d_l.keys()).T],ignore_index=True)
+stats_df=pd.concat([stats_df,pd.DataFrame(d.values(),index=d.keys()).T],ignore_index=True)
+
+d=get_risks(m2_itr,m2_itr_best,'Momentum 2',m2_itr_best[1],'Inverse Turnover Rate')
+risks_df=pd.concat([risks_df,pd.DataFrame(d.values(),index=d.keys()).T],ignore_index=True)
+
 # =============================================================================
 # MOMENTUM 3
 # =============================================================================
@@ -285,30 +234,17 @@ m3_w.index=pd.to_datetime(m3_w.index)
 m3_l=pd.read_csv(os.path.join(m3_best[0],'Momentum 3','L',period,m3_best[2]+'.csv'),index_col='Date')
 m3_l.index=pd.to_datetime(m3_l.index)
 
-if m3_best[1]=='W-L':
-    d_w,d_l,d=get_stats(m3_w, m3_l,m3_best,'Momentum 3','W-L','Inverse Volatility')
-    m3_r=m3.resample('M').last()
-    m3_r=100*np.log(m3_r/m3_r.shift(1)).dropna()
-    d['Std']=m3_r.std()[0]
-    
-    stats_df=pd.concat([stats_df,pd.DataFrame(d_w.values(),index=d_w.keys()).T],ignore_index=True)
-    stats_df=pd.concat([stats_df,pd.DataFrame(d_l.values(),index=d_l.keys()).T],ignore_index=True)
-    stats_df=pd.concat([stats_df,pd.DataFrame(d.values(),index=d.keys()).T],ignore_index=True)
-    
-    d=get_risks(m3,m3_best,'Momentum 3','W-L','Inverse Volatility')
-    risks_df=pd.concat([risks_df,pd.DataFrame(d.values(),index=d.keys()).T],ignore_index=True)
-else:
-    d_w,d_l,d=get_stats(m3_w, m3_l,m3_best,'Momentum 3','L-W','Inverse Volatility')
-    m3_r=m3.resample('M').last()
-    m3_r=100*np.log(m3_r/m3_r.shift(1)).dropna()
-    d['Std']=m3_r.std()[0]
-    
-    stats_df=pd.concat([stats_df,pd.DataFrame(d_w.values(),index=d_w.keys()).T],ignore_index=True)
-    stats_df=pd.concat([stats_df,pd.DataFrame(d_l.values(),index=d_l.keys()).T],ignore_index=True)
-    stats_df=pd.concat([stats_df,pd.DataFrame(d.values(),index=d.keys()).T],ignore_index=True)
-    
-    d=get_risks(m3,m3_best,'Momentum 3','L-W','Inverse Volatility')
-    risks_df=pd.concat([risks_df,pd.DataFrame(d.values(),index=d.keys()).T],ignore_index=True)
+d_w,d_l,d=get_stats(m3_w, m3_l,m3_best,'Momentum 3',m3_best[1],'Inverse Volatility')
+m3_r=m3.resample('M').last()
+m3_r=100*np.log(m3_r/m3_r.shift(1)).dropna()
+d['Std']=m3_r.std()[0]
+
+stats_df=pd.concat([stats_df,pd.DataFrame(d_w.values(),index=d_w.keys()).T],ignore_index=True)
+stats_df=pd.concat([stats_df,pd.DataFrame(d_l.values(),index=d_l.keys()).T],ignore_index=True)
+stats_df=pd.concat([stats_df,pd.DataFrame(d.values(),index=d.keys()).T],ignore_index=True)
+
+d=get_risks(m3,m3_best,'Momentum 3',m3_best[1],'Inverse Volatility')
+risks_df=pd.concat([risks_df,pd.DataFrame(d.values(),index=d.keys()).T],ignore_index=True)
 
 ticker='^NSEI'
 ticker=yf.Ticker(ticker)
