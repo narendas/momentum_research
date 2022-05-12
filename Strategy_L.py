@@ -89,8 +89,8 @@ if __name__=='__main__':
     ticker=yf.Ticker(ticker)
     
     investment=50000
-    period='Day'
-    mass='Turnover Rate'
+    period='Year'
+    mass='Inverse Turnover Rate'
     
     if period=='Day':    
         max_iter=8
@@ -99,7 +99,7 @@ if __name__=='__main__':
     elif period=='Month':    
         max_iter=13
     elif period=='Year':    
-        max_iter=4
+        max_iter=6
     '''MOMENTUM 1'''
     for j in range(1,max_iter):
         for k in range(1,max_iter):
@@ -111,12 +111,12 @@ if __name__=='__main__':
                 portfolio_value.index=portfolio_value['Date']
                 portfolio_value.drop('Date',axis=1,inplace=True)
                 
-                #nifty=ticker.history(start=portfolio_value.index[0],end=portfolio_value.index[-1])
-                #nifty=(nifty['Close']-nifty.loc[nifty.index[0],'Close'])/nifty.loc[nifty.index[0],'Close']
+                nifty=ticker.history(start=portfolio_value.index[0],end=portfolio_value.index[-1])
+                nifty=(nifty['Close']-nifty.loc[nifty.index[0],'Close'])/nifty.loc[nifty.index[0],'Close']
                 
                 portfolio_value=(portfolio_value-k*investment)/(k*investment)
                 portfolio_value.plot()
-                #nifty.plot()
+                nifty.plot()
                 plt.show()
             else:
                 matrix=pd.read_csv('Momentum/Momentum Matrix/'+period+'/'+mass+'/matrix.csv')
@@ -132,12 +132,12 @@ if __name__=='__main__':
                     break
                 portfolio_value.to_csv('Strategy/Momentum 1/'+mass+'/L/'+period+'/'+str(j)+'-'+str(k)+'.csv')
                 
-                #nifty=ticker.history(start=portfolio_value.index[0],end=portfolio_value.index[-1])
-                #nifty=(nifty['Close']-nifty.loc[nifty.index[0],'Close'])/nifty.loc[nifty.index[0],'Close']
+                nifty=ticker.history(start=portfolio_value.index[0],end=portfolio_value.index[-1])
+                nifty=(nifty['Close']-nifty.loc[nifty.index[0],'Close'])/nifty.loc[nifty.index[0],'Close']
                 
                 portfolio_value=(portfolio_value-k*investment)/(k*investment)
                 portfolio_value.plot()
-                #nifty.plot()
+                nifty.plot()
                 plt.show()
 
     '''MOMENTUM 2'''
@@ -151,12 +151,12 @@ if __name__=='__main__':
                 portfolio_value.index=portfolio_value['Date']
                 portfolio_value.drop('Date',axis=1,inplace=True)
                 
-                #nifty=ticker.history(start=portfolio_value.index[0],end=portfolio_value.index[-1])
-                #nifty=(nifty['Close']-nifty.loc[nifty.index[0],'Close'])/nifty.loc[nifty.index[0],'Close']
+                nifty=ticker.history(start=portfolio_value.index[0],end=portfolio_value.index[-1])
+                nifty=(nifty['Close']-nifty.loc[nifty.index[0],'Close'])/nifty.loc[nifty.index[0],'Close']
                 
                 portfolio_value=(portfolio_value-k*investment)/(k*investment)
                 portfolio_value.plot()
-                #nifty.plot()
+                nifty.plot()
                 plt.show()
             else:
                 matrix=pd.read_csv('Momentum/Momentum Matrix/'+period+'/'+mass+'/matrix.csv')
@@ -176,12 +176,12 @@ if __name__=='__main__':
                     break
                 portfolio_value.to_csv('Strategy/Momentum 2/'+mass+'/L/'+period+'/'+str(j)+'-'+str(k)+'.csv')
                 
-                #nifty=ticker.history(start=portfolio_value.index[0],end=portfolio_value.index[-1])
-                #nifty=(nifty['Close']-nifty.loc[nifty.index[0],'Close'])/nifty.loc[nifty.index[0],'Close']
+                nifty=ticker.history(start=portfolio_value.index[0],end=portfolio_value.index[-1])
+                nifty=(nifty['Close']-nifty.loc[nifty.index[0],'Close'])/nifty.loc[nifty.index[0],'Close']
                 
                 portfolio_value=(portfolio_value-k*investment)/(k*investment)
                 portfolio_value.plot()
-                #nifty.plot()
+                nifty.plot()
                 plt.show()
                 
     '''MOMENTUM 3'''
@@ -195,12 +195,12 @@ if __name__=='__main__':
                 portfolio_value.index=portfolio_value['Date']
                 portfolio_value.drop('Date',axis=1,inplace=True)
                 
-                #nifty=ticker.history(start=portfolio_value.index[0],end=portfolio_value.index[-1])
-                #nifty=(nifty['Close']-nifty.loc[nifty.index[0],'Close'])/nifty.loc[nifty.index[0],'Close']
+                nifty=ticker.history(start=portfolio_value.index[0],end=portfolio_value.index[-1])
+                nifty=(nifty['Close']-nifty.loc[nifty.index[0],'Close'])/nifty.loc[nifty.index[0],'Close']
             
                 portfolio_value=(portfolio_value-k*investment)/(k*investment)
                 portfolio_value.plot()
-                #nifty.plot()
+                nifty.plot()
                 plt.show()
             else:
                 matrix=pd.read_csv('Momentum/Momentum Matrix 3/'+period+'/matrix.csv')
@@ -215,10 +215,10 @@ if __name__=='__main__':
                     break
                 portfolio_value.to_csv('Strategy/Momentum 3/L/'+period+'/'+str(j)+'-'+str(k)+'.csv')
                 
-                #nifty=ticker.history(start=portfolio_value.index[0],end=portfolio_value.index[-1])
-                #nifty=(nifty['Close']-nifty.loc[nifty.index[0],'Close'])/nifty.loc[nifty.index[0],'Close']
+                nifty=ticker.history(start=portfolio_value.index[0],end=portfolio_value.index[-1])
+                nifty=(nifty['Close']-nifty.loc[nifty.index[0],'Close'])/nifty.loc[nifty.index[0],'Close']
                 
                 portfolio_value=(portfolio_value-k*investment)/(k*investment)
                 portfolio_value.plot()
-                #nifty.plot()
+                nifty.plot()
                 plt.show()

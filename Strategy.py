@@ -91,7 +91,7 @@ if __name__=='__main__':
     ticker=yf.Ticker(ticker)
     
     investment=100000
-    period='Month'
+    period='Year'
     mass='Turnover Rate'
     
     if period=='Day':    
@@ -101,7 +101,7 @@ if __name__=='__main__':
     elif period=='Month':    
         max_iter=13
     elif period=='Year':    
-        max_iter=4
+        max_iter=6
     '''MOMENTUM 1'''
     for j in range(1,max_iter):
         for k in range(1,max_iter):
