@@ -19,7 +19,7 @@ def max_dd(df):
 
 ticker='^NSEI'
 ticker=yf.Ticker(ticker)
-nifty=ticker.history(start=date(2018,1,1),end=date(2022,1,1,))['Close']
+nifty=ticker.history(start=date(2014,1,1),end=date(2022,1,1,))['Close']
 fin=nifty.values[-1]
 init=nifty.values[0]
 
@@ -52,4 +52,4 @@ stats_df=pd.DataFrame(columns=['Portfolio','Mean','Std','Fin Wealth','Sharpe Rat
 stats_df=pd.concat([stats_df,pd.DataFrame(d.values(),index=d.keys()).T],
                    ignore_index=True)
 
-stats_df.to_csv('Results/nifty_2018_stats1.csv',index=False)
+stats_df.to_csv('Results/nifty_stats1.csv',index=False)
